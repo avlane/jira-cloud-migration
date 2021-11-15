@@ -1,0 +1,168 @@
+[
+  {
+    "id": "summary",
+    "name": "Summary",
+    "custom": false,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "summary"
+    ],
+    "schema": {
+      "type": "string",
+      "system": "summary"
+    }
+  },
+  {
+    "id": "status",
+    "name": "Status",
+    "custom": false,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "status"
+    ],
+    "schema": {
+      "type": "status",
+      "system": "status"
+    }
+  },
+  {
+    "id": "customfield_10100",
+    "name": "Story Points",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10100]",
+      "Story Points"
+    ],
+    "schema": {
+      "type": "number",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+      "customId": 10100
+    }
+  },
+  {
+    "id": "customfield_10101",
+    "name": "Story points",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10101]",
+      "Story points"
+    ],
+    "schema": {
+      "type": "number",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:float",
+      "customId": 10101
+    }
+  },
+  {
+    "id": "customfield_10102",
+    "name": "Epic Link",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10102]",
+      "Epic Link"
+    ],
+    "schema": {
+      "type": "any",
+      "custom": "com.pyxis.greenhopper.jira:gh-epic-link",
+      "customId": 10102
+    }
+  },
+  {
+    "id": "customfield_10103",
+    "name": "Customer Impact",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10103]",
+      "Customer Impact"
+    ],
+    "schema": {
+      "type": "option",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select",
+      "customId": 10103
+    }
+  },
+  {
+    "id": "customfield_10104",
+    "name": "Affected Environments",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10104]",
+      "Affected Environments"
+    ],
+    "schema": {
+      "type": "array",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multiselect",
+      "customId": 10104
+    }
+  },
+  {
+    "id": "customfield_10105",
+    "name": "Legacy Ref",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10105]",
+      "Legacy Ref"
+    ],
+    "schema": {
+      "type": "string",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:textfield",
+      "customId": 10105
+    }
+  },
+  {
+    "id": "customfield_10106",
+    "name": "Go Live",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10106]",
+      "Go Live"
+    ],
+    "schema": {
+      "type": "date",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:datepicker",
+      "customId": 10106
+    }
+  },
+  {
+    "id": "customfield_10107",
+    "name": "Security Reviewer",
+    "custom": true,
+    "orderable": true,
+    "navigable": true,
+    "searchable": true,
+    "clauseNames": [
+      "cf[10107]",
+      "Security Reviewer"
+    ],
+    "schema": {
+      "type": "user",
+      "custom": "com.atlassian.jira.plugin.system.customfieldtypes:userpicker",
+      "customId": 10107
+    }
+  }
+]
