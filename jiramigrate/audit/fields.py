@@ -26,3 +26,24 @@ def duplicates(fields):
 def duplicate_rows(fields):
     return [{"name": g[0]["name"], "type": field_type(g[0]), "ids": [f["id"] for f in g],
              "variants": sorted({f["name"] for f in g})} for g in duplicates(fields)]
+
+
+def usage(server, fields):
+    """Issue count per custom field using `cf[id] is not EMPTY`. None when the field cannot be searched."""
+    from ..api import ApiError
+
+    rows = []
+    for field in fields:
+        custom_id = field["schema"]["customId"]
+        try:
+            issues = server.count("cf[{}] is not EMPTY".format(custom_id))
+        except ApiError as exc:
+            if exc.status != 400:
+                raise
+            issues = None
+        rows.append({"id": field["id"], "name": field["name"], "type": field_type(field), "issues": issues})
+    return rows
+
+
+def unused(rows):
+    return [r for r in rows if r["issues"] == 0]
