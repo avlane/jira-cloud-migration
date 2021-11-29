@@ -1,0 +1,100 @@
+[
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=amoreau",
+    "key": "JIRAUSER10100",
+    "name": "amoreau",
+    "displayName": "Alice Moreau",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "alice.moreau@example.com"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=bokafor",
+    "key": "JIRAUSER10101",
+    "name": "bokafor",
+    "displayName": "Bob Okafor",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "bob.okafor@example.com"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=cnguyen",
+    "key": "JIRAUSER10102",
+    "name": "cnguyen",
+    "displayName": "Carol Nguyen",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "carol.nguyen@example.com"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=dwhitfield",
+    "key": "JIRAUSER10103",
+    "name": "dwhitfield",
+    "displayName": "Dan Whitfield",
+    "active": false,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "dan.whitfield@example.com"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=svc-build",
+    "key": "JIRAUSER10104",
+    "name": "svc-build",
+    "displayName": "Build Service",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=econtractor",
+    "key": "JIRAUSER10105",
+    "name": "econtractor",
+    "displayName": "Erin Castellano (contractor)",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "Erin.Castellano@Example.com"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=ecastellano",
+    "key": "JIRAUSER10106",
+    "name": "ecastellano",
+    "displayName": "Erin Castellano",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "erin.castellano@example.com"
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=frank",
+    "key": "JIRAUSER10107",
+    "name": "frank",
+    "displayName": "Frank Ito",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/user?username=tmp-user",
+    "key": "JIRAUSER10108",
+    "name": "tmp-user",
+    "displayName": "Temp User",
+    "active": true,
+    "deleted": false,
+    "timeZone": "Europe/Dublin",
+    "locale": "en_GB",
+    "emailAddress": "tmp@localhost"
+  }
+]
