@@ -13,6 +13,14 @@ Migration Assistant rather than a replacement for it:
 
 Status: just started. Audits first.
 
+## Usage
+
+    python -m jiramigrate audit fields            # duplicate custom fields
+    python -m jiramigrate audit fields --unused   # fields no issue uses (one search per field)
+    python -m jiramigrate audit users             # users without a usable email address
+
+Every audit takes `--format table|csv|json`.
+
 ## Configuration
 
 Server or Data Center (read-only access is enough, an administrator for the app inventory):
