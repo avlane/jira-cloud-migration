@@ -4,6 +4,7 @@ import sys
 
 from . import config, report
 from .api import Api, ApiError
+from .audit import attachments as audit_attachments
 from .audit import fields as audit_fields
 from .audit import users as audit_users
 
@@ -19,6 +20,9 @@ def build_parser():
     p_fields = audit.add_parser("fields", parents=[common], help="custom fields: duplicates and unused")
     p_fields.add_argument("--unused", action="store_true", help="count issues per field and list the empty ones (slow)")
     audit.add_parser("users", parents=[common], help="users without a usable email address")
+    p_att = audit.add_parser("attachments", parents=[common], help="attachments larger than a size limit")
+    p_att.add_argument("--limit-mb", type=float, default=audit_attachments.DEFAULT_LIMIT_MB, help="size limit in MB (default 10)")
+    p_att.add_argument("--totals", action="store_true", help="show total attachment size per project instead")
     return parser
 
 
@@ -46,6 +50,13 @@ def audit_users_command(server, args, out):
     return emit(rows, ("key", "name", "displayName", "email", "active", "findings"), args, out)
 
 
+def audit_attachments_command(server, args, out):
+    if args.totals:
+        return emit(audit_attachments.totals_by_project(server), ("project", "files", "sizeMB"), args, out)
+    rows = audit_attachments.oversized(server, args.limit_mb)
+    return emit(rows, ("project", "issue", "filename", "sizeMB", "mimeType", "author"), args, out)
+
+
 def main(argv=None, server=None, out=None):
     out = out if out is not None else sys.stdout
     args = build_parser().parse_args(argv)
@@ -55,6 +66,8 @@ def main(argv=None, server=None, out=None):
             return audit_fields_command(server, args, out)
         if args.command == "audit" and args.what == "users":
             return audit_users_command(server, args, out)
+        if args.command == "audit" and args.what == "attachments":
+            return audit_attachments_command(server, args, out)
     except (config.ConfigError, ApiError) as exc:
         print("error: {}".format(exc), file=sys.stderr)
         return 2

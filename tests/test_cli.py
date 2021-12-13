@@ -32,6 +32,14 @@ class AuditCliTests(unittest.TestCase):
         names = [line.split(",")[1] for line in text.splitlines()[1:]]
         self.assertEqual(names, ["dwhitfield", "svc-build", "econtractor", "ecastellano", "frank", "tmp-user"])
 
+    def test_audit_attachments(self):
+        from tests.helpers import search_handler
+        session = FakeSession().add("GET", r"/rest/api/2/search$", search_handler(load("server_attachment_issues.json")))
+        code, text = run(["audit", "attachments", "--limit-mb", "20", "--format", "csv"], session)
+        self.assertEqual([line.split(",")[1] for line in text.splitlines()[1:]], ["OPS-9", "PLAT-12"])
+        code, text = run(["audit", "attachments", "--totals", "--format", "csv"], session)
+        self.assertEqual(text.splitlines()[1], "OPS,3,80.4")
+
     def test_errors_exit_with_2(self):
         from tests.helpers import FakeResponse
         session = FakeSession().add("GET", r"/field$", FakeResponse(401, {"message": "Unauthorized"}))

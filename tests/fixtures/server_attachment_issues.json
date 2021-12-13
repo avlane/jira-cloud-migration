@@ -1,0 +1,138 @@
+[
+  {
+    "id": "20001",
+    "key": "PLAT-12",
+    "self": "https://jira.corp.example.com/rest/api/2/issue/20001",
+    "fields": {
+      "project": {
+        "key": "PLAT",
+        "name": "PLAT"
+      },
+      "attachment": [
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/attachment/1",
+          "id": "1",
+          "filename": "release-build.zip",
+          "author": {
+            "name": "amoreau",
+            "key": "amoreau",
+            "displayName": "amoreau"
+          },
+          "created": "2019-06-03T10:11:12.000+0000",
+          "size": 26214400,
+          "mimeType": "application/zip",
+          "content": "https://jira.corp.example.com/secure/attachment/1/release-build.zip"
+        },
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/attachment/2",
+          "id": "2",
+          "filename": "notes.txt",
+          "author": {
+            "name": "amoreau",
+            "key": "amoreau",
+            "displayName": "amoreau"
+          },
+          "created": "2019-06-03T10:11:12.000+0000",
+          "size": 1200,
+          "mimeType": "text/plain",
+          "content": "https://jira.corp.example.com/secure/attachment/2/notes.txt"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20002",
+    "key": "PLAT-31",
+    "self": "https://jira.corp.example.com/rest/api/2/issue/20002",
+    "fields": {
+      "project": {
+        "key": "PLAT",
+        "name": "PLAT"
+      },
+      "attachment": [
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/attachment/3",
+          "id": "3",
+          "filename": "demo.mp4",
+          "author": {
+            "name": "bokafor",
+            "key": "bokafor",
+            "displayName": "bokafor"
+          },
+          "created": "2019-06-03T10:11:12.000+0000",
+          "size": 12582912,
+          "mimeType": "video/mp4",
+          "content": "https://jira.corp.example.com/secure/attachment/3/demo.mp4"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20003",
+    "key": "OPS-4",
+    "self": "https://jira.corp.example.com/rest/api/2/issue/20003",
+    "fields": {
+      "project": {
+        "key": "OPS",
+        "name": "OPS"
+      },
+      "attachment": [
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/attachment/4",
+          "id": "4",
+          "filename": "screenshot.png",
+          "author": {
+            "name": "cnguyen",
+            "key": "cnguyen",
+            "displayName": "cnguyen"
+          },
+          "created": "2019-06-03T10:11:12.000+0000",
+          "size": 450000,
+          "mimeType": "image/png",
+          "content": "https://jira.corp.example.com/secure/attachment/4/screenshot.png"
+        },
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/attachment/5",
+          "id": "5",
+          "filename": "db-dump.sql.gz",
+          "author": {
+            "name": "cnguyen",
+            "key": "cnguyen",
+            "displayName": "cnguyen"
+          },
+          "created": "2019-06-03T10:11:12.000+0000",
+          "size": 10485760,
+          "mimeType": "application/gzip",
+          "content": "https://jira.corp.example.com/secure/attachment/5/db-dump.sql.gz"
+        }
+      ]
+    }
+  },
+  {
+    "id": "20004",
+    "key": "OPS-9",
+    "self": "https://jira.corp.example.com/rest/api/2/issue/20004",
+    "fields": {
+      "project": {
+        "key": "OPS",
+        "name": "OPS"
+      },
+      "attachment": [
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/attachment/6",
+          "id": "6",
+          "filename": "huge-export.csv",
+          "author": {
+            "name": "dwhitfield",
+            "key": "dwhitfield",
+            "displayName": "dwhitfield"
+          },
+          "created": "2019-06-03T10:11:12.000+0000",
+          "size": 73400320,
+          "mimeType": "text/csv",
+          "content": "https://jira.corp.example.com/secure/attachment/6/huge-export.csv"
+        }
+      ]
+    }
+  }
+]

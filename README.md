@@ -19,6 +19,8 @@ Status: just started. Audits first.
     python -m jiramigrate audit fields --unused   # fields no issue uses (one search per field)
     python -m jiramigrate audit users             # users without a usable email address
 
+    python -m jiramigrate audit attachments --limit-mb 20
+
 Every audit takes `--format table|csv|json`.
 
 ## Configuration
