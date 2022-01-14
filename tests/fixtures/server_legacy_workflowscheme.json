@@ -1,0 +1,7 @@
+{
+  "name": "Default Workflow Scheme",
+  "description": "Default workflow scheme",
+  "defaultWorkflow": "jira",
+  "issueTypeMappings": {},
+  "self": "https://jira.corp.example.com/rest/api/2/project/LEGACY/workflowscheme"
+}

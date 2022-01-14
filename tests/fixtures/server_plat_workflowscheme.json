@@ -1,0 +1,10 @@
+{
+  "id": 10100,
+  "name": "PLAT Workflow Scheme",
+  "description": "",
+  "defaultWorkflow": "PLAT Workflow",
+  "issueTypeMappings": {
+    "10004": "PLAT Bug Workflow"
+  },
+  "self": "https://jira.corp.example.com/rest/api/2/workflowscheme/10100"
+}

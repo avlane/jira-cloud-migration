@@ -1,0 +1,8 @@
+{
+  "id": 10101,
+  "name": "OPS Workflow Scheme",
+  "description": "",
+  "defaultWorkflow": "OPS Support Flow",
+  "issueTypeMappings": {},
+  "self": "https://jira.corp.example.com/rest/api/2/workflowscheme/10101"
+}

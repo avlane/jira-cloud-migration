@@ -1,0 +1,50 @@
+[
+  {
+    "name": "jira",
+    "description": "",
+    "lastModifiedDate": "2021-03-14T09:30:00.000+0000",
+    "lastModifiedUser": "amoreau",
+    "steps": 3,
+    "default": true
+  },
+  {
+    "name": "PLAT Workflow",
+    "description": "",
+    "lastModifiedDate": "2021-03-14T09:30:00.000+0000",
+    "lastModifiedUser": "amoreau",
+    "steps": 6,
+    "default": false
+  },
+  {
+    "name": "PLAT Bug Workflow",
+    "description": "",
+    "lastModifiedDate": "2021-03-14T09:30:00.000+0000",
+    "lastModifiedUser": "amoreau",
+    "steps": 5,
+    "default": false
+  },
+  {
+    "name": "OPS Support Flow",
+    "description": "",
+    "lastModifiedDate": "2021-03-14T09:30:00.000+0000",
+    "lastModifiedUser": "amoreau",
+    "steps": 7,
+    "default": false
+  },
+  {
+    "name": "Old Release Flow",
+    "description": "",
+    "lastModifiedDate": "2021-03-14T09:30:00.000+0000",
+    "lastModifiedUser": "amoreau",
+    "steps": 4,
+    "default": false
+  },
+  {
+    "name": "Retired Hotfix Flow",
+    "description": "",
+    "lastModifiedDate": "2021-03-14T09:30:00.000+0000",
+    "lastModifiedUser": "amoreau",
+    "steps": 3,
+    "default": false
+  }
+]
