@@ -1,0 +1,22 @@
+{
+  "permissionSchemes": [
+    {
+      "id": 10000,
+      "name": "Default Permission Scheme",
+      "description": "",
+      "self": "https://jira.corp.example.com/rest/api/2/permissionscheme/10000"
+    },
+    {
+      "id": 10001,
+      "name": "Open Intake",
+      "description": "",
+      "self": "https://jira.corp.example.com/rest/api/2/permissionscheme/10001"
+    },
+    {
+      "id": 10002,
+      "name": "2018 Contractor Access",
+      "description": "",
+      "self": "https://jira.corp.example.com/rest/api/2/permissionscheme/10002"
+    }
+  ]
+}

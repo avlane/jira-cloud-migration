@@ -1,0 +1,23 @@
+{
+  "startAt": 0,
+  "maxResults": 50,
+  "total": 3,
+  "isLast": true,
+  "values": [
+    {
+      "id": 10000,
+      "name": "Default Notification Scheme",
+      "description": ""
+    },
+    {
+      "id": 10001,
+      "name": "OPS Notifications",
+      "description": ""
+    },
+    {
+      "id": 10002,
+      "name": "Everything To Everyone",
+      "description": "Do not use"
+    }
+  ]
+}
