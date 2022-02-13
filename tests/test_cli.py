@@ -40,6 +40,12 @@ class AuditCliTests(unittest.TestCase):
         code, text = run(["audit", "attachments", "--totals", "--format", "csv"], session)
         self.assertEqual(text.splitlines()[1], "OPS,3,80.4")
 
+    def test_audit_addons(self):
+        session = FakeSession().add("GET", r"/rest/plugins/1.0/$", load("server_plugins.json"))
+        code, text = run(["audit", "addons", "--format", "csv"], session)
+        self.assertEqual(len(text.splitlines()), 5)
+        self.assertIn("Timesheet for Jira", text)
+
     def test_errors_exit_with_2(self):
         from tests.helpers import FakeResponse
         session = FakeSession().add("GET", r"/field$", FakeResponse(401, {"message": "Unauthorized"}))

@@ -1,0 +1,107 @@
+{
+  "plugins": [
+    {
+      "key": "com.atlassian.jira.jira-core",
+      "name": "Jira Core",
+      "version": "8.20.3",
+      "enabled": true,
+      "userInstalled": false,
+      "usesLicensing": false,
+      "description": "Jira Core",
+      "vendor": {
+        "name": "Atlassian",
+        "marketplaceLink": "https://marketplace.atlassian.com/vendors/1",
+        "link": "https://apps.example.com"
+      },
+      "links": {
+        "self": "/rest/plugins/1.0/com.atlassian.jira.jira-core-key"
+      }
+    },
+    {
+      "key": "com.example.timesheet",
+      "name": "Timesheet for Jira",
+      "version": "4.2.1",
+      "enabled": true,
+      "userInstalled": true,
+      "usesLicensing": true,
+      "description": "Timesheet for Jira",
+      "vendor": {
+        "name": "Example Apps",
+        "marketplaceLink": "https://marketplace.atlassian.com/vendors/1",
+        "link": "https://apps.example.com"
+      },
+      "links": {
+        "self": "/rest/plugins/1.0/com.example.timesheet-key"
+      }
+    },
+    {
+      "key": "com.example.scriptrunner",
+      "name": "Script Console",
+      "version": "6.30.0",
+      "enabled": true,
+      "userInstalled": true,
+      "usesLicensing": true,
+      "description": "Script Console",
+      "vendor": {
+        "name": "Script Labs",
+        "marketplaceLink": "https://marketplace.atlassian.com/vendors/1",
+        "link": "https://apps.example.com"
+      },
+      "links": {
+        "self": "/rest/plugins/1.0/com.example.scriptrunner-key"
+      }
+    },
+    {
+      "key": "com.example.legacy-report",
+      "name": "Legacy Reports",
+      "version": "1.0.4",
+      "enabled": false,
+      "userInstalled": true,
+      "usesLicensing": false,
+      "description": "Legacy Reports",
+      "vendor": {
+        "name": "Example Apps",
+        "marketplaceLink": "https://marketplace.atlassian.com/vendors/1",
+        "link": "https://apps.example.com"
+      },
+      "links": {
+        "self": "/rest/plugins/1.0/com.example.legacy-report-key"
+      }
+    },
+    {
+      "key": "com.example.theme",
+      "name": "Corporate Theme",
+      "version": "2.1.0",
+      "enabled": true,
+      "userInstalled": true,
+      "usesLicensing": false,
+      "description": "Corporate Theme",
+      "vendor": {
+        "name": "In-house",
+        "marketplaceLink": "https://marketplace.atlassian.com/vendors/1",
+        "link": "https://apps.example.com"
+      },
+      "links": {
+        "self": "/rest/plugins/1.0/com.example.theme-key"
+      }
+    },
+    {
+      "key": "com.atlassian.jira.plugins.jira-software-plugin",
+      "name": "Jira Software",
+      "version": "8.20.3",
+      "enabled": true,
+      "userInstalled": false,
+      "usesLicensing": false,
+      "description": "Jira Software",
+      "vendor": {
+        "name": "Atlassian",
+        "marketplaceLink": "https://marketplace.atlassian.com/vendors/1",
+        "link": "https://apps.example.com"
+      },
+      "links": {
+        "self": "/rest/plugins/1.0/com.atlassian.jira.plugins.jira-software-plugin-key"
+      }
+    }
+  ],
+  "safeMode": false
+}
