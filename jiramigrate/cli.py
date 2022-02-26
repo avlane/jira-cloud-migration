@@ -1,5 +1,6 @@
 """Command line entry point: jira-migrate <command>"""
 import argparse
+import json
 import sys
 
 from . import config, report
@@ -21,7 +22,8 @@ def build_parser():
     p_fields = audit.add_parser("fields", parents=[common], help="custom fields: duplicates and unused")
     p_fields.add_argument("--unused", action="store_true", help="count issues per field and list the empty ones (slow)")
     audit.add_parser("users", parents=[common], help="users without a usable email address")
-    audit.add_parser("addons", parents=[common], help="user-installed apps")
+    p_addons = audit.add_parser("addons", parents=[common], help="user-installed apps")
+    p_addons.add_argument("--cloud-apps", metavar="FILE", help="JSON file of {app key: {cloud: available|none, note}} to check against")
     p_att = audit.add_parser("attachments", parents=[common], help="attachments larger than a size limit")
     p_att.add_argument("--limit-mb", type=float, default=audit_attachments.DEFAULT_LIMIT_MB, help="size limit in MB (default 10)")
     p_att.add_argument("--totals", action="store_true", help="show total attachment size per project instead")
@@ -60,7 +62,12 @@ def audit_attachments_command(server, args, out):
 
 
 def audit_addons_command(server, args, out):
-    return emit(audit_addons.inventory(server), ("key", "name", "version", "vendor", "enabled", "licensed"), args, out)
+    cloud_apps = None
+    if args.cloud_apps:
+        with open(args.cloud_apps, encoding="utf-8") as handle:
+            cloud_apps = json.load(handle)
+    rows = audit_addons.inventory(server, cloud_apps)
+    return emit(rows, ("key", "name", "version", "vendor", "enabled", "licensed", "finding", "note"), args, out)
 
 
 def main(argv=None, server=None, out=None):

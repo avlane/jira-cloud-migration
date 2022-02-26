@@ -46,6 +46,18 @@ class AuditCliTests(unittest.TestCase):
         self.assertEqual(len(text.splitlines()), 5)
         self.assertIn("Timesheet for Jira", text)
 
+    def test_audit_addons_with_a_cloud_apps_file(self):
+        import os
+        import tempfile
+        session = FakeSession().add("GET", r"/rest/plugins/1.0/$", load("server_plugins.json"))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "apps.json")
+            with open(path, "w", encoding="utf-8") as handle:
+                json.dump(load("cloud_apps.json"), handle)
+            code, text = run(["audit", "addons", "--cloud-apps", path, "--format", "json"], session)
+        findings = {r["key"]: r["finding"] for r in json.loads(text)}
+        self.assertEqual(findings["com.example.theme"], "no-cloud-version")
+
     def test_errors_exit_with_2(self):
         from tests.helpers import FakeResponse
         session = FakeSession().add("GET", r"/field$", FakeResponse(401, {"message": "Unauthorized"}))

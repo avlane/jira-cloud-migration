@@ -1,0 +1,14 @@
+{
+  "com.example.timesheet": {
+    "cloud": "available",
+    "note": "Timesheet for Jira Cloud; data moves with the Cloud Migration Assistant"
+  },
+  "com.example.scriptrunner": {
+    "cloud": "available",
+    "note": "Different scripting model on Cloud; scripts must be rewritten"
+  },
+  "com.example.theme": {
+    "cloud": "none",
+    "note": "Cosmetic; not needed"
+  }
+}

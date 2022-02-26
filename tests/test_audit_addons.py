@@ -25,5 +25,24 @@ class AddonTests(unittest.TestCase):
         self.assertFalse(rows[1]["enabled"])
 
 
+class CloudAvailabilityTests(unittest.TestCase):
+    def test_findings_against_a_cloud_apps_file(self):
+        server, _ = make_server()
+        rows = {r["key"]: r for r in addons.inventory(server, load("cloud_apps.json"))}
+        self.assertEqual(rows["com.example.timesheet"]["finding"], "")
+        self.assertIn("Cloud Migration Assistant", rows["com.example.timesheet"]["note"])
+        self.assertEqual(rows["com.example.theme"]["finding"], "no-cloud-version")
+        self.assertEqual(rows["com.example.legacy-report"]["finding"], "disabled")
+
+    def test_unknown_apps(self):
+        server, _ = make_server()
+        rows = {r["key"]: r for r in addons.inventory(server, {})}
+        self.assertEqual(rows["com.example.scriptrunner"]["finding"], "unknown")
+
+    def test_no_file_means_no_findings_except_none(self):
+        server, _ = make_server()
+        self.assertEqual({r["finding"] for r in addons.inventory(server)}, {"", "disabled"})
+
+
 if __name__ == "__main__":
     unittest.main()
