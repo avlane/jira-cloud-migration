@@ -21,6 +21,8 @@ Status: just started. Audits first.
 
     python -m jiramigrate audit attachments --limit-mb 20
 
+    python -m jiramigrate snapshot -o before.json   # per-project counts, to compare with after the migration
+
 Every audit takes `--format table|csv|json`.
 
 ## Configuration

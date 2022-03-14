@@ -3,7 +3,7 @@ import argparse
 import json
 import sys
 
-from . import config, report
+from . import config, report, snapshot
 from .api import Api, ApiError
 from .audit import addons as audit_addons
 from .audit import attachments as audit_attachments
@@ -27,6 +27,8 @@ def build_parser():
     p_att = audit.add_parser("attachments", parents=[common], help="attachments larger than a size limit")
     p_att.add_argument("--limit-mb", type=float, default=audit_attachments.DEFAULT_LIMIT_MB, help="size limit in MB (default 10)")
     p_att.add_argument("--totals", action="store_true", help="show total attachment size per project instead")
+    p_snap = top.add_parser("snapshot", help="record per-project issue counts on the Server site")
+    p_snap.add_argument("--output", "-o", required=True, help="where to write the snapshot JSON")
     return parser
 
 
@@ -75,6 +77,11 @@ def main(argv=None, server=None, out=None):
     args = build_parser().parse_args(argv)
     try:
         server = server or make_server()
+        if args.command == "snapshot":
+            snap = snapshot.take(server)
+            snapshot.save(args.output, snap)
+            out.write("saved {} projects ({} issues) to {}\n".format(len(snap["projects"]), sum(p["issues"] for p in snap["projects"].values()), args.output))
+            return 0
         if args.command == "audit" and args.what == "fields":
             return audit_fields_command(server, args, out)
         if args.command == "audit" and args.what == "users":

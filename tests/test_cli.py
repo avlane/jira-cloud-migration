@@ -58,6 +58,20 @@ class AuditCliTests(unittest.TestCase):
         findings = {r["key"]: r["finding"] for r in json.loads(text)}
         self.assertEqual(findings["com.example.theme"], "no-cloud-version")
 
+    def test_snapshot_command(self):
+        import os
+        import tempfile
+        from tests.test_snapshot import search
+        session = FakeSession().add("GET", r"/rest/api/2/project$", load("server_projects.json")).add("GET", r"/rest/api/2/search$", search)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "snap.json")
+            code, text = run(["snapshot", "-o", path], session)
+            with open(path, encoding="utf-8") as handle:
+                saved = json.load(handle)
+        self.assertEqual(code, 0)
+        self.assertIn("saved 3 projects (2045 issues)", text)
+        self.assertEqual(saved["projects"]["OPS"]["issues"], 845)
+
     def test_errors_exit_with_2(self):
         from tests.helpers import FakeResponse
         session = FakeSession().add("GET", r"/field$", FakeResponse(401, {"message": "Unauthorized"}))
