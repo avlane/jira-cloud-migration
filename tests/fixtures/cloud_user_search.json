@@ -1,0 +1,56 @@
+{
+  "alice.moreau@example.com": [
+    {
+      "self": "https://example.atlassian.net/rest/api/3/user?accountId=5b10ac8d82e05b22cc7d4ef5",
+      "accountId": "5b10ac8d82e05b22cc7d4ef5",
+      "accountType": "atlassian",
+      "emailAddress": "alice.moreau@example.com",
+      "displayName": "Alice Moreau",
+      "active": true,
+      "timeZone": "Europe/Dublin"
+    }
+  ],
+  "bob.okafor@example.com": [
+    {
+      "self": "https://example.atlassian.net/rest/api/3/user?accountId=5b6a3c1f2d8e4a0b9c7f1e22",
+      "accountId": "5b6a3c1f2d8e4a0b9c7f1e22",
+      "accountType": "atlassian",
+      "emailAddress": "bob.okafor@example.com",
+      "displayName": "Bob Okafor",
+      "active": true,
+      "timeZone": "Europe/Dublin"
+    }
+  ],
+  "carol.nguyen@example.com": [
+    {
+      "self": "https://example.atlassian.net/rest/api/3/user?accountId=712020:6f1d2a3b-4c5d-4e6f-8a9b-0c1d2e3f4a5b",
+      "accountId": "712020:6f1d2a3b-4c5d-4e6f-8a9b-0c1d2e3f4a5b",
+      "accountType": "atlassian",
+      "displayName": "Carol Nguyen",
+      "active": true,
+      "timeZone": "Europe/Dublin"
+    }
+  ],
+  "dan.whitfield@example.com": [
+    {
+      "self": "https://example.atlassian.net/rest/api/3/user?accountId=557058:aa11bb22-cc33-44dd-ee55-ff6677889900",
+      "accountId": "557058:aa11bb22-cc33-44dd-ee55-ff6677889900",
+      "accountType": "atlassian",
+      "emailAddress": "dan.whitfield@example.com",
+      "displayName": "Dan Whitfield",
+      "active": false,
+      "timeZone": "Europe/Dublin"
+    }
+  ],
+  "erin.castellano@example.com": [
+    {
+      "self": "https://example.atlassian.net/rest/api/3/user?accountId=5d53f3cbc6b9320d9ea5bdc2",
+      "accountId": "5d53f3cbc6b9320d9ea5bdc2",
+      "accountType": "atlassian",
+      "emailAddress": "erin.castellano@example.com",
+      "displayName": "Erin Castellano",
+      "active": true,
+      "timeZone": "Europe/Dublin"
+    }
+  ]
+}
