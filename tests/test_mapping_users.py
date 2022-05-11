@@ -86,6 +86,15 @@ class MappingStatusTests(unittest.TestCase):
         self.assertEqual(rows["ecastellano"]["note"], "same email as econtractor")
         self.assertEqual(rows["ecastellano"]["accountId"], "")
 
+    def test_summary_and_mention_table(self):
+        cloud, _ = make_cloud()
+        rows = mapping.map_users(cloud, load("server_users.json"))
+        self.assertEqual(mapping.summary(rows), {"matched": 4, "probable": 1, "no-email": 2, "duplicate": 1, "missing": 1})
+        names = mapping.mention_names(rows)
+        self.assertEqual(names["amoreau"], "5b10ac8d82e05b22cc7d4ef5")
+        self.assertNotIn("ecastellano", names)
+        self.assertNotIn("frank", names)
+
     def test_summary_of_the_fixture(self):
         cloud, _ = make_cloud()
         statuses = {r["serverName"]: r["status"] for r in mapping.map_users(cloud, load("server_users.json"))}

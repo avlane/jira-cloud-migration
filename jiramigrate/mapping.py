@@ -58,3 +58,16 @@ def map_users(cloud, server_users):
                 claimed[email] = row["serverName"]
         rows.append(row)
     return rows
+
+
+def summary(rows):
+    """Counts by status, e.g. {"matched": 5, "missing": 1}."""
+    counts = {}
+    for row in rows:
+        counts[row["status"]] = counts.get(row["status"], 0) + 1
+    return counts
+
+
+def mention_names(rows):
+    """Server username -> accountId, for rewriting [~username] mentions in text after the import."""
+    return {r["serverName"]: r["accountId"] for r in rows if r["accountId"]}
