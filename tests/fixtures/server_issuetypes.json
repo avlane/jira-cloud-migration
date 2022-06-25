@@ -1,0 +1,32 @@
+[
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/issuetype/10000",
+    "id": "10000",
+    "name": "Bug",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/issuetype/10001",
+    "id": "10001",
+    "name": "Story",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/issuetype/10002",
+    "id": "10002",
+    "name": "Task",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/issuetype/10003",
+    "id": "10003",
+    "name": "Sub-task",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/issuetype/10004",
+    "id": "10004",
+    "name": "Improvement",
+    "description": ""
+  }
+]

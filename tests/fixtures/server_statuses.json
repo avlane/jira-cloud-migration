@@ -1,0 +1,38 @@
+[
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/status/10000",
+    "id": "10000",
+    "name": "Open",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/status/10001",
+    "id": "10001",
+    "name": "In Progress",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/status/10002",
+    "id": "10002",
+    "name": "Resolved",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/status/10003",
+    "id": "10003",
+    "name": "Closed",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/status/10004",
+    "id": "10004",
+    "name": "Reopened",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/status/10005",
+    "id": "10005",
+    "name": "In Review",
+    "description": ""
+  }
+]

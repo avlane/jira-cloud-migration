@@ -1,0 +1,32 @@
+[
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10000",
+    "id": "10000",
+    "name": "Highest",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10001",
+    "id": "10001",
+    "name": "High",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10002",
+    "id": "10002",
+    "name": "Medium",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10003",
+    "id": "10003",
+    "name": "Low",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10004",
+    "id": "10004",
+    "name": "Lowest",
+    "description": ""
+  }
+]

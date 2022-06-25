@@ -1,0 +1,32 @@
+[
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10000",
+    "id": "10000",
+    "name": "Blocker",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10001",
+    "id": "10001",
+    "name": "Critical",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10002",
+    "id": "10002",
+    "name": "Major",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10003",
+    "id": "10003",
+    "name": "Minor",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/priority/10004",
+    "id": "10004",
+    "name": "Trivial",
+    "description": ""
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/resolution/10000",
+    "id": "10000",
+    "name": "Fixed",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/resolution/10001",
+    "id": "10001",
+    "name": "Won't Fix",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/resolution/10002",
+    "id": "10002",
+    "name": "Duplicate",
+    "description": ""
+  },
+  {
+    "self": "https://jira.corp.example.com/rest/api/2/resolution/10003",
+    "id": "10003",
+    "name": "Cannot Reproduce",
+    "description": ""
+  }
+]
