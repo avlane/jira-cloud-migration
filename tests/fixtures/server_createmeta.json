@@ -1,0 +1,203 @@
+{
+  "expand": "projects",
+  "projects": [
+    {
+      "self": "https://jira.corp.example.com/rest/api/2/project/10000",
+      "id": "10000",
+      "key": "PLAT",
+      "name": "Platform",
+      "issuetypes": [
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/issuetype/1",
+          "id": "1",
+          "name": "Bug",
+          "subtask": false,
+          "fields": {
+            "summary": {
+              "name": "Summary",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "system": "summary"
+              }
+            },
+            "customfield_10103": {
+              "required": false,
+              "schema": {
+                "type": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select",
+                "customId": 10103
+              },
+              "name": "Customer Impact",
+              "allowedValues": [
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20000",
+                  "value": "High",
+                  "id": "20000"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20001",
+                  "value": "Medium",
+                  "id": "20001"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20002",
+                  "value": "Low",
+                  "id": "20002"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20003",
+                  "value": "Blocker",
+                  "id": "20003"
+                }
+              ]
+            },
+            "customfield_10104": {
+              "required": false,
+              "schema": {
+                "type": "array",
+                "items": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multiselect",
+                "customId": 10104
+              },
+              "name": "Affected Environments",
+              "allowedValues": [
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20000",
+                  "value": "prod",
+                  "id": "20000"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20001",
+                  "value": "staging",
+                  "id": "20001"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20002",
+                  "value": "dev",
+                  "id": "20002"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20003",
+                  "value": "dr-site",
+                  "id": "20003"
+                }
+              ]
+            },
+            "customfield_10108": {
+              "required": false,
+              "schema": {
+                "type": "option-with-child",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:cascadingselect",
+                "customId": 10108
+              },
+              "name": "Hardware",
+              "allowedValues": [
+                {
+                  "value": "Laptop",
+                  "id": "30000",
+                  "children": [
+                    {
+                      "value": "Dell",
+                      "id": "30001"
+                    },
+                    {
+                      "value": "Apple",
+                      "id": "30002"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/issuetype/1",
+          "id": "1",
+          "name": "Story",
+          "subtask": false,
+          "fields": {
+            "customfield_10103": {
+              "required": false,
+              "schema": {
+                "type": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select",
+                "customId": 10103
+              },
+              "name": "Customer Impact",
+              "allowedValues": [
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20000",
+                  "value": "High",
+                  "id": "20000"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20001",
+                  "value": "Medium",
+                  "id": "20001"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20002",
+                  "value": "Low",
+                  "id": "20002"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20003",
+                  "value": "Blocker",
+                  "id": "20003"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "self": "https://jira.corp.example.com/rest/api/2/project/10001",
+      "id": "10001",
+      "key": "OPS",
+      "name": "Operations",
+      "issuetypes": [
+        {
+          "self": "https://jira.corp.example.com/rest/api/2/issuetype/1",
+          "id": "1",
+          "name": "Task",
+          "subtask": false,
+          "fields": {
+            "customfield_10103": {
+              "required": false,
+              "schema": {
+                "type": "option",
+                "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select",
+                "customId": 10103
+              },
+              "name": "Customer Impact",
+              "allowedValues": [
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20000",
+                  "value": "High",
+                  "id": "20000"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20001",
+                  "value": "Medium",
+                  "id": "20001"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20002",
+                  "value": "Low",
+                  "id": "20002"
+                },
+                {
+                  "self": "https://jira.corp.example.com/rest/api/2/customFieldOption/20003",
+                  "value": "None",
+                  "id": "20003"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
