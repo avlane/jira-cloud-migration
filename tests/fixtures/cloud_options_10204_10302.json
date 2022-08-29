@@ -1,0 +1,18 @@
+{
+  "maxResults": 100,
+  "startAt": 0,
+  "total": 2,
+  "isLast": true,
+  "values": [
+    {
+      "id": "40000",
+      "value": "prod",
+      "disabled": false
+    },
+    {
+      "id": "40001",
+      "value": "dev",
+      "disabled": false
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "maxResults": 100,
+  "startAt": 0,
+  "total": 4,
+  "isLast": true,
+  "values": [
+    {
+      "id": "40000",
+      "value": "High",
+      "disabled": false
+    },
+    {
+      "id": "40001",
+      "value": "Medium",
+      "disabled": false
+    },
+    {
+      "id": "40002",
+      "value": "Low",
+      "disabled": false
+    },
+    {
+      "id": "40003",
+      "value": "Legacy",
+      "disabled": false
+    }
+  ]
+}

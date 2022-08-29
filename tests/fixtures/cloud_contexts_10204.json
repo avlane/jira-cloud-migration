@@ -1,0 +1,22 @@
+{
+  "maxResults": 50,
+  "startAt": 0,
+  "total": 2,
+  "isLast": true,
+  "values": [
+    {
+      "id": "10301",
+      "name": "Platform",
+      "description": "",
+      "isGlobalContext": false,
+      "isAnyIssueType": false
+    },
+    {
+      "id": "10302",
+      "name": "Operations",
+      "description": "",
+      "isGlobalContext": false,
+      "isAnyIssueType": false
+    }
+  ]
+}
