@@ -23,6 +23,14 @@ Status: just started. Audits first.
 
     python -m jiramigrate snapshot -o before.json   # per-project counts, to compare with after the migration
 
+    python -m jiramigrate map users -o users.json     # Server username/key -> Cloud accountId, by email
+    python -m jiramigrate map fields -o fields.json   # custom fields by name and type
+    python -m jiramigrate map names -o names.json     # statuses, issue types, priorities, resolutions
+    python -m jiramigrate map options -o options.json # select options missing on Cloud
+
+The map commands need the Cloud settings too. Each writes a JSON mapping file
+(`version`, `kind`, `summary`, `items`) next to the table it prints.
+
 Every audit takes `--format table|csv|json`.
 
 ## Configuration

@@ -13,6 +13,43 @@ def run(argv, session):
     return code, out.getvalue()
 
 
+class MapCliTests(unittest.TestCase):
+    def run_map(self, argv, server_session, cloud_session):
+        out = io.StringIO()
+        code = cli.main(argv, server=Api("https://jira.corp.example.com", session=server_session), out=out,
+                        cloud=Api("https://example.atlassian.net", prefix="/rest/api/3/", session=cloud_session))
+        return code, out.getvalue()
+
+    def test_map_users_writes_a_mapping_file(self):
+        import os
+        import tempfile
+        results = load("cloud_user_search.json")
+        server = FakeSession().add("GET", r"/rest/api/2/user/search$", paged(load("server_users.json")))
+        cloud = FakeSession().add("GET", r"/user/search$", lambda call: results.get(call["params"]["query"].lower(), []))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "users.json")
+            code, text = self.run_map(["map", "users", "-o", path, "--format", "csv"], server, cloud)
+            with open(path, encoding="utf-8") as handle:
+                data = json.load(handle)
+        self.assertEqual(code, 0)
+        self.assertEqual(data["kind"], "users")
+        self.assertEqual(data["summary"], {"matched": 4, "probable": 1, "no-email": 2, "duplicate": 1, "missing": 1})
+        self.assertEqual(data["server"], "https://jira.corp.example.com")
+        self.assertEqual(text.splitlines()[0], "serverKey,serverName,displayName,email,accountId,cloudName,status,note")
+
+    def test_map_fields_and_names(self):
+        server = FakeSession().add("GET", r"/rest/api/2/field$", load("server_fields.json"))
+        cloud = FakeSession().add("GET", r"/rest/api/3/field$", load("cloud_fields.json"))
+        code, text = self.run_map(["map", "fields", "--format", "json"], server, cloud)
+        self.assertEqual({r["serverId"]: r["status"] for r in json.loads(text)}["customfield_10106"], "type-mismatch")
+        from tests.test_namemap import sites
+        server_api, cloud_api = sites()
+        out = io.StringIO()
+        code = cli.main(["map", "names", "--format", "csv"], server=server_api, cloud=cloud_api, out=out)
+        self.assertEqual(code, 0)
+        self.assertIn("status,Open,10000,,,missing", out.getvalue())
+
+
 class AuditCliTests(unittest.TestCase):
     def test_audit_fields_lists_duplicates(self):
         session = FakeSession().add("GET", r"/rest/api/2/field$", load("server_fields.json"))

@@ -3,7 +3,7 @@ import argparse
 import json
 import sys
 
-from . import config, report, snapshot
+from . import config, fieldmap, mapfile, namemap, options, report, snapshot, usermap
 from .api import Api, ApiError
 from .audit import addons as audit_addons
 from .audit import attachments as audit_attachments
@@ -29,7 +29,17 @@ def build_parser():
     p_att.add_argument("--totals", action="store_true", help="show total attachment size per project instead")
     p_snap = top.add_parser("snapshot", help="record per-project issue counts on the Server site")
     p_snap.add_argument("--output", "-o", required=True, help="where to write the snapshot JSON")
+    mapping = top.add_parser("map", help="build mapping files between the Server and Cloud sites").add_subparsers(dest="what", required=True)
+    for name, helptext in (("users", "Server users -> Cloud accounts, by email"), ("fields", "Server custom fields -> Cloud fields"),
+                           ("names", "statuses, issue types, priorities, resolutions by name"), ("options", "select field options missing on Cloud")):
+        p = mapping.add_parser(name, parents=[common], help=helptext)
+        p.add_argument("--output", "-o", metavar="FILE", help="also write the mapping file (JSON) here")
     return parser
+
+
+def make_cloud():
+    settings = config.cloud_from_env()
+    return Api(settings.url, auth=(settings.email, settings.token), prefix="/rest/api/3/")
 
 
 def make_server():
@@ -72,11 +82,38 @@ def audit_addons_command(server, args, out):
     return emit(rows, ("key", "name", "version", "vendor", "enabled", "licensed", "finding", "note"), args, out)
 
 
-def main(argv=None, server=None, out=None):
+MAP_COLUMNS = {
+    "users": usermap.COLUMNS, "fields": fieldmap.COLUMNS, "names": namemap.COLUMNS, "options": options.COLUMNS}
+
+
+def map_rows(kind, server, cloud):
+    """Rows for one mapping kind."""
+    if kind == "users":
+        return usermap.map_users(cloud, audit_users.all_users(server))
+    if kind == "names":
+        return namemap.map_names(server, cloud)
+    server_fields = audit_fields.custom_fields(server)
+    if kind == "fields":
+        return fieldmap.map_fields(server_fields, fieldmap.cloud_custom_fields(cloud))
+    field_rows = fieldmap.map_fields(server_fields, fieldmap.cloud_custom_fields(cloud))
+    return options.compare(cloud, options.server_options(server), field_rows)
+
+
+def map_command(server, cloud, args, out):
+    rows = map_rows(args.what, server, cloud)
+    if args.output:
+        mapfile.write(args.output, mapfile.build(args.what, rows, server.base_url, cloud.base_url))
+    emit(rows, MAP_COLUMNS[args.what], args, out)
+    return 0
+
+
+def main(argv=None, server=None, out=None, cloud=None):
     out = out if out is not None else sys.stdout
     args = build_parser().parse_args(argv)
     try:
         server = server or make_server()
+        if args.command == "map":
+            return map_command(server, cloud or make_cloud(), args, out)
         if args.command == "snapshot":
             snap = snapshot.take(server)
             snapshot.save(args.output, snap)
