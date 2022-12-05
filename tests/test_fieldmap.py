@@ -36,6 +36,15 @@ class FieldMapTests(unittest.TestCase):
         self.assertEqual((row["status"], row["cloudId"]), ("type-mismatch", "customfield_10206"))
         self.assertEqual(row["note"], "Cloud field is a datetime")
 
+    def test_two_cloud_fields_with_the_same_name_and_type_are_ambiguous(self):
+        twin = {"id": "customfield_10299", "name": "Customer impact", "custom": True,
+                "schema": {"type": "option", "custom": "com.atlassian.jira.plugin.system.customfieldtypes:select", "customId": 10299}}
+        rows = {r["serverId"]: r for r in fieldmap.map_fields(server_fields(), cloud_fields() + [twin])}
+        self.assertEqual(rows["customfield_10103"]["status"], "ambiguous")
+        self.assertEqual(rows["customfield_10103"]["cloudId"], "")
+        self.assertEqual(rows["customfield_10103"]["note"], "Cloud has customfield_10203, customfield_10299")
+        self.assertEqual(rows["customfield_10100"]["status"], "matched")
+
     def test_missing(self):
         row = self.rows()["customfield_10105"]
         self.assertEqual((row["status"], row["cloudId"]), ("missing", ""))
