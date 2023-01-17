@@ -1,0 +1,12 @@
+{
+  "status": {
+    "Open": "To Do",
+    "Resolved": "Done"
+  },
+  "priority": {
+    "Major": "Medium"
+  },
+  "resolution": {
+    "Fixed": "Done"
+  }
+}

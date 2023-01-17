@@ -1,0 +1,298 @@
+[
+  {
+    "id": "91150",
+    "key": "PLAT-1",
+    "fields": {
+      "summary": "Login times out",
+      "issuetype": {
+        "name": "Bug"
+      },
+      "status": {
+        "name": "Open"
+      },
+      "priority": {
+        "name": "Major"
+      },
+      "resolution": null,
+      "assignee": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=amoreau",
+        "name": "amoreau",
+        "key": "amoreau",
+        "displayName": "amoreau",
+        "active": true
+      },
+      "reporter": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=bokafor",
+        "name": "bokafor",
+        "key": "bokafor",
+        "displayName": "bokafor",
+        "active": true
+      },
+      "labels": [
+        "auth"
+      ],
+      "components": [
+        {
+          "name": "Web"
+        }
+      ],
+      "fixVersions": [
+        {
+          "name": "2.15"
+        }
+      ],
+      "description": "Users see a spinner.\r\nHappens on [~bokafor]'s laptop.",
+      "comment": {
+        "total": 2,
+        "comments": [
+          {
+            "id": "1",
+            "body": "Seen on prod."
+          },
+          {
+            "id": "2",
+            "body": "[~amoreau] please check."
+          }
+        ]
+      },
+      "attachment": [
+        {
+          "id": "1",
+          "filename": "trace.har",
+          "size": 4821
+        }
+      ],
+      "issuelinks": [
+        {
+          "id": "1409",
+          "type": {
+            "name": "Blocks",
+            "inward": "is blocked by",
+            "outward": "blocks"
+          },
+          "outwardIssue": {
+            "key": "PLAT-3"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "53990",
+    "key": "PLAT-2",
+    "fields": {
+      "summary": "Add audit export",
+      "issuetype": {
+        "name": "Story"
+      },
+      "status": {
+        "name": "Resolved"
+      },
+      "priority": {
+        "name": "Major"
+      },
+      "resolution": {
+        "name": "Fixed"
+      },
+      "assignee": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=cnguyen",
+        "name": "cnguyen",
+        "key": "cnguyen",
+        "displayName": "cnguyen",
+        "active": true
+      },
+      "reporter": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=amoreau",
+        "name": "amoreau",
+        "key": "amoreau",
+        "displayName": "amoreau",
+        "active": true
+      },
+      "labels": [],
+      "components": [
+        {
+          "name": "API"
+        }
+      ],
+      "fixVersions": [
+        {
+          "name": "2.14"
+        }
+      ],
+      "description": "As an auditor I can download the log.",
+      "comment": {
+        "total": 1,
+        "comments": [
+          {
+            "id": "1",
+            "body": "Done in 2.14."
+          }
+        ]
+      },
+      "attachment": [],
+      "issuelinks": [
+        {
+          "id": "1668",
+          "type": {
+            "name": "Relates",
+            "inward": "relates to",
+            "outward": "relates to"
+          },
+          "outwardIssue": {
+            "key": "OPS-1"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "2959",
+    "key": "PLAT-3",
+    "fields": {
+      "summary": "Upgrade build image",
+      "issuetype": {
+        "name": "Task"
+      },
+      "status": {
+        "name": "Open"
+      },
+      "priority": {
+        "name": "Major"
+      },
+      "resolution": null,
+      "assignee": null,
+      "reporter": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=cnguyen",
+        "name": "cnguyen",
+        "key": "cnguyen",
+        "displayName": "cnguyen",
+        "active": true
+      },
+      "labels": [],
+      "components": [],
+      "fixVersions": [],
+      "description": "Move to the new base image.\nSee the runbook.",
+      "comment": {
+        "total": 3,
+        "comments": [
+          {
+            "id": "1",
+            "body": "one"
+          },
+          {
+            "id": "2",
+            "body": "two"
+          },
+          {
+            "id": "3",
+            "body": "three"
+          }
+        ]
+      },
+      "attachment": [
+        {
+          "id": "1",
+          "filename": "a.log",
+          "size": 100
+        },
+        {
+          "id": "2",
+          "filename": "b.log",
+          "size": 250
+        }
+      ],
+      "issuelinks": [
+        {
+          "id": "1757",
+          "type": {
+            "name": "Blocks",
+            "inward": "is blocked by",
+            "outward": "blocks"
+          },
+          "inwardIssue": {
+            "key": "PLAT-1"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "78349",
+    "key": "OPS-1",
+    "fields": {
+      "summary": "Disk alert noise",
+      "issuetype": {
+        "name": "Bug"
+      },
+      "status": {
+        "name": "Open"
+      },
+      "priority": {
+        "name": "Major"
+      },
+      "resolution": null,
+      "assignee": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=cnguyen",
+        "name": "cnguyen",
+        "key": "cnguyen",
+        "displayName": "cnguyen",
+        "active": true
+      },
+      "reporter": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=svc-build",
+        "name": "svc-build",
+        "key": "svc-build",
+        "displayName": "svc-build",
+        "active": true
+      },
+      "labels": [
+        "vip",
+        "urgent"
+      ],
+      "components": [],
+      "fixVersions": [],
+      "description": "Too many alerts.",
+      "comment": {
+        "total": 0,
+        "comments": []
+      },
+      "attachment": [],
+      "issuelinks": []
+    }
+  },
+  {
+    "id": "3304",
+    "key": "OPS-2",
+    "fields": {
+      "summary": "Rotate certificates",
+      "issuetype": {
+        "name": "Task"
+      },
+      "status": {
+        "name": "Open"
+      },
+      "priority": {
+        "name": "Major"
+      },
+      "resolution": null,
+      "assignee": null,
+      "reporter": {
+        "self": "https://jira.corp.example.com/rest/api/2/user?username=amoreau",
+        "name": "amoreau",
+        "key": "amoreau",
+        "displayName": "amoreau",
+        "active": true
+      },
+      "labels": [],
+      "components": [],
+      "fixVersions": [],
+      "description": "",
+      "comment": {
+        "total": 0,
+        "comments": []
+      },
+      "attachment": [],
+      "issuelinks": []
+    }
+  }
+]
