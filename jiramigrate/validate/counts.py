@@ -3,6 +3,14 @@ from ..api import ApiError
 
 COLUMNS = ("check", "subject", "field", "server", "cloud", "status")
 
+# (name, extra JQL, key in a snapshot file). Anything without a snapshot key is counted live on the Server.
+METRICS = (
+    ("issues", "", "issues"),
+    ("withAttachments", "attachments is not EMPTY", "withAttachments"),
+    ("resolved", "resolution is not EMPTY", None),
+    ("assigned", "assignee is not EMPTY", None),
+)
+
 
 def project_jql(key, extra=""):
     return 'project = "{}"'.format(key) + (" AND " + extra if extra else "")
@@ -28,8 +36,8 @@ def row(subject, field, server_n, cloud_n):
     return {"check": "count", "subject": subject, "field": field, "server": server_n, "cloud": cloud_n, "status": status}
 
 
-def compare(server, cloud, projects=None, snapshot=None):
-    """Issue counts for each project. With a snapshot the Server numbers are the recorded ones."""
+def compare(server, cloud, projects=None, snapshot=None, metrics=METRICS):
+    """Counts for each project and metric. With a snapshot the Server numbers are the recorded ones where it has them."""
     if projects:
         keys = list(projects)
     elif snapshot:
@@ -38,7 +46,8 @@ def compare(server, cloud, projects=None, snapshot=None):
         keys = sorted(p["key"] for p in server.get("project"))
     rows = []
     for key in keys:
-        recorded = (snapshot or {}).get("projects", {}).get(key)
-        expected = recorded["issues"] if recorded else server.count(project_jql(key))
-        rows.append(row(key, "issues", expected, cloud_count(cloud, project_jql(key))))
+        recorded = (snapshot or {}).get("projects", {}).get(key, {})
+        for name, extra, snapshot_key in metrics:
+            expected = recorded[snapshot_key] if snapshot_key in recorded else server.count(project_jql(key, extra))
+            rows.append(row(key, name, expected, cloud_count(cloud, project_jql(key, extra))))
     return rows
