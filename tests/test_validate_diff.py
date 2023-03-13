@@ -46,5 +46,60 @@ class ScalarTests(unittest.TestCase):
         self.assertEqual(diff.scalar_diffs(server["PLAT-1"], cloud["PLAT-1"], context()), [])
 
 
+class PeopleAndSetTests(unittest.TestCase):
+    def test_mapped_people_match_by_account_id(self):
+        server, cloud = issues()
+        self.assertEqual(diff.people_diffs(server["PLAT-1"], cloud["PLAT-1"], context()), [])
+
+    def test_unassigned_on_both_sides(self):
+        server, cloud = issues()
+        self.assertEqual([d["field"] for d in diff.people_diffs(server["PLAT-3"], cloud["PLAT-3"], context())], [])
+
+    def test_wrong_assignee(self):
+        server, cloud = issues()
+        found = diff.people_diffs(server["OPS-1"], cloud["OPS-1"], context())
+        assignee = [d for d in found if d["field"] == "assignee"][0]
+        self.assertEqual((assignee["server"], assignee["cloud"], assignee["status"]), (m_ca3(), m_ca1(), "differs"))
+
+    def test_unmapped_users_are_flagged_separately(self):
+        server, cloud = issues()
+        found = diff.people_diffs(server["OPS-1"], cloud["OPS-1"], context())
+        reporter = [d for d in found if d["field"] == "reporter"][0]
+        self.assertEqual((reporter["server"], reporter["status"]), ("svc-build", "unmapped-user"))
+
+    def test_assignee_dropped_during_migration(self):
+        server, cloud = issues()
+        cloud["PLAT-1"]["fields"]["assignee"] = None
+        found = diff.people_diffs(server["PLAT-1"], cloud["PLAT-1"], context())
+        self.assertEqual([(d["field"], d["cloud"]) for d in found], [("assignee", "(none)")])
+
+    def test_sets(self):
+        server, cloud = issues()
+        self.assertEqual(diff.set_diffs(server["PLAT-1"], cloud["PLAT-1"]), [])
+        found = diff.set_diffs(server["OPS-1"], cloud["OPS-1"])
+        self.assertEqual([(d["field"], d["server"], d["cloud"]) for d in found], [("labels", "urgent, vip", "vip")])
+
+    def test_components_and_versions(self):
+        server, cloud = issues()
+        cloud["PLAT-1"]["fields"]["components"] = []
+        cloud["PLAT-1"]["fields"]["fixVersions"] = [{"name": "2.16"}]
+        fields = {d["field"]: d for d in diff.set_diffs(server["PLAT-1"], cloud["PLAT-1"])}
+        self.assertEqual((fields["components"]["server"], fields["components"]["cloud"]), ("Web", ""))
+        self.assertEqual((fields["fixVersions"]["server"], fields["fixVersions"]["cloud"]), ("2.15", "2.16"))
+
+    def test_compare_issue_combines_everything(self):
+        server, cloud = issues()
+        self.assertEqual(diff.compare_issue(server["PLAT-1"], cloud["PLAT-1"], context()), [])
+        self.assertEqual({d["field"] for d in diff.compare_issue(server["OPS-1"], cloud["OPS-1"], context())}, {"assignee", "reporter", "labels"})
+
+
+def m_ca1():
+    return "5b10ac8d82e05b22cc7d4ef5"
+
+
+def m_ca3():
+    return "712020:6f1d2a3b-4c5d-4e6f-8a9b-0c1d2e3f4a5b"
+
+
 if __name__ == "__main__":
     unittest.main()

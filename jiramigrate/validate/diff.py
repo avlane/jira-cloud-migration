@@ -32,5 +32,44 @@ def scalar_diffs(server_issue, cloud_issue, ctx):
     return out
 
 
+def people_diffs(server_issue, cloud_issue, ctx):
+    """Assignee and reporter, compared as Cloud account ids through the user mapping.
+
+    A Server user with no entry in the mapping is reported as `unmapped-user` rather than as a
+    difference: there is no account the issue could be expected to carry.
+    """
+    key = server_issue["key"]
+    out = []
+    for field in ("assignee", "reporter"):
+        person = server_issue["fields"].get(field)
+        actual = (cloud_issue["fields"].get(field) or {}).get("accountId", "")
+        if not person:
+            expected = ""
+        elif person["name"] in ctx.users:
+            expected = ctx.users[person["name"]]
+        else:
+            out.append(diff(key, field, person["name"], actual, status="unmapped-user"))
+            continue
+        if actual != expected:
+            out.append(diff(key, field, expected or "(none)", actual or "(none)"))
+    return out
+
+
+SETS = (("labels", None), ("components", "name"), ("fixVersions", "name"))
+
+
+def set_diffs(server_issue, cloud_issue):
+    """Labels, components and fix versions as sets of names."""
+    key = server_issue["key"]
+    out = []
+    for field, attribute in SETS:
+        def names(issue):
+            return {item[attribute] if attribute else item for item in issue["fields"].get(field) or []}
+        theirs, ours = names(server_issue), names(cloud_issue)
+        if theirs != ours:
+            out.append(diff(key, field, ", ".join(sorted(theirs)), ", ".join(sorted(ours))))
+    return out
+
+
 def compare_issue(server_issue, cloud_issue, ctx):
-    return scalar_diffs(server_issue, cloud_issue, ctx)
+    return scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx) + set_diffs(server_issue, cloud_issue)
