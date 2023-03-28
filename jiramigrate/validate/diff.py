@@ -1,4 +1,6 @@
 """Field-level comparison of one issue on both sites."""
+import difflib
+import re
 from collections import namedtuple
 
 Context = namedtuple("Context", "users names", defaults=({}, {}))
@@ -71,5 +73,50 @@ def set_diffs(server_issue, cloud_issue):
     return out
 
 
+_MENTION = re.compile(r"\[~([^\]:]+)\]")
+
+
+def normalise_text(text, ctx):
+    """Make Server and Cloud text comparable.
+
+    Line endings and trailing blanks are not content. Server mentions, [~username], come back from
+    Cloud as [~accountid:ID], so they are rewritten through the user mapping first.
+    """
+    text = (text or "").replace("\r\n", "\n").replace("\r", "\n")
+
+    def mention(found):
+        account = ctx.users.get(found.group(1))
+        return "[~accountid:{}]".format(account) if account else found.group(0)
+
+    text = _MENTION.sub(mention, text)
+    return "\n".join(line.rstrip() for line in text.split("\n")).strip()
+
+
+def _excerpt(text, width=60):
+    text = " ".join(text.split())
+    return text if len(text) <= width else text[:width - 3] + "..."
+
+
+def text_diffs(server_issue, cloud_issue, ctx):
+    """Description and comment bodies. Comments are compared pairwise; a different number of
+    comments is reported by the count check instead."""
+    key = server_issue["key"]
+    pairs = [("description", server_issue["fields"].get("description"), cloud_issue["fields"].get("description"))]
+    theirs = (server_issue["fields"].get("comment") or {}).get("comments", [])
+    ours = (cloud_issue["fields"].get("comment") or {}).get("comments", [])
+    for number, (a, b) in enumerate(zip(theirs, ours), 1):
+        pairs.append(("comment {}".format(number), a.get("body"), b.get("body")))
+    out = []
+    for field, a, b in pairs:
+        expected, actual = normalise_text(a, ctx), normalise_text(b, ctx)
+        if expected != actual:
+            ratio = difflib.SequenceMatcher(None, expected, actual).ratio()
+            found = diff(key, field, _excerpt(expected), _excerpt(actual))
+            found["note"] = "similarity {:.2f}".format(ratio)
+            out.append(found)
+    return out
+
+
 def compare_issue(server_issue, cloud_issue, ctx):
-    return scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx) + set_diffs(server_issue, cloud_issue)
+    return (scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
+            + set_diffs(server_issue, cloud_issue) + text_diffs(server_issue, cloud_issue, ctx))

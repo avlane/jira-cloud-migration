@@ -91,6 +91,46 @@ class PeopleAndSetTests(unittest.TestCase):
         server, cloud = issues()
         self.assertEqual(diff.compare_issue(server["PLAT-1"], cloud["PLAT-1"], context()), [])
         self.assertEqual({d["field"] for d in diff.compare_issue(server["OPS-1"], cloud["OPS-1"], context())}, {"assignee", "reporter", "labels"})
+        self.assertEqual({d["field"] for d in diff.compare_issue(server["PLAT-3"], cloud["PLAT-3"], context())}, {"description"})
+
+
+class TextTests(unittest.TestCase):
+    def test_line_endings_and_mentions_are_normalised(self):
+        server, cloud = issues()
+        self.assertEqual(diff.text_diffs(server["PLAT-1"], cloud["PLAT-1"], context()), [])
+
+    def test_without_the_user_mapping_mentions_differ(self):
+        server, cloud = issues()
+        found = diff.text_diffs(server["PLAT-1"], cloud["PLAT-1"], diff.Context())
+        self.assertEqual([d["field"] for d in found], ["description", "comment 2"])
+
+    def test_changed_description(self):
+        server, cloud = issues()
+        found = diff.text_diffs(server["PLAT-3"], cloud["PLAT-3"], context())
+        self.assertEqual(len(found), 1)
+        self.assertEqual((found[0]["field"], found[0]["server"], found[0]["cloud"]), ("description", "Move to the new base image. See the runbook.", "Move to the new base image."))
+        self.assertTrue(found[0]["note"].startswith("similarity 0."))
+
+    def test_extra_comments_are_left_to_the_count_check(self):
+        server, cloud = issues()
+        self.assertEqual([d for d in diff.text_diffs(server["PLAT-3"], cloud["PLAT-3"], context()) if d["field"].startswith("comment")], [])
+
+    def test_changed_comment(self):
+        server, cloud = issues()
+        cloud["PLAT-1"]["fields"]["comment"]["comments"][0]["body"] = "Seen on staging."
+        found = diff.text_diffs(server["PLAT-1"], cloud["PLAT-1"], context())
+        self.assertEqual([d["field"] for d in found], ["comment 1"])
+
+    def test_long_text_is_cut_in_the_report(self):
+        found = diff.text_diffs({"key": "A-1", "fields": {"description": "word " * 40}}, {"key": "A-1", "fields": {"description": "other"}}, diff.Context())
+        self.assertEqual(len(found[0]["server"]), 60)
+        self.assertTrue(found[0]["server"].endswith("..."))
+
+    def test_normalise_text(self):
+        ctx = context()
+        self.assertEqual(diff.normalise_text("a  \r\nb\r\n\r\n", ctx), "a\nb")
+        self.assertEqual(diff.normalise_text("hi [~amoreau] and [~ghost]", ctx), "hi [~accountid:5b10ac8d82e05b22cc7d4ef5] and [~ghost]")
+        self.assertEqual(diff.normalise_text(None, ctx), "")
 
 
 def m_ca1():
