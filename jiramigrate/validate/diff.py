@@ -117,6 +117,16 @@ def text_diffs(server_issue, cloud_issue, ctx):
     return out
 
 
+def count_diffs(server_issue, cloud_issue):
+    """Number of comments and attachments, and the total size of the attachments."""
+    key = server_issue["key"]
+    s, c = server_issue["fields"], cloud_issue["fields"]
+    comments = ("comments", (s.get("comment") or {}).get("total", 0), (c.get("comment") or {}).get("total", 0))
+    files = ("attachments", len(s.get("attachment") or []), len(c.get("attachment") or []))
+    size = ("attachment bytes", sum(a.get("size", 0) for a in s.get("attachment") or []), sum(a.get("size", 0) for a in c.get("attachment") or []))
+    return [diff(key, name, a, b) for name, a, b in (comments, files, size) if a != b]
+
+
 def compare_issue(server_issue, cloud_issue, ctx):
-    return (scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
+    return (count_diffs(server_issue, cloud_issue) + scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
             + set_diffs(server_issue, cloud_issue) + text_diffs(server_issue, cloud_issue, ctx))

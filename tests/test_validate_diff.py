@@ -91,7 +91,28 @@ class PeopleAndSetTests(unittest.TestCase):
         server, cloud = issues()
         self.assertEqual(diff.compare_issue(server["PLAT-1"], cloud["PLAT-1"], context()), [])
         self.assertEqual({d["field"] for d in diff.compare_issue(server["OPS-1"], cloud["OPS-1"], context())}, {"assignee", "reporter", "labels"})
-        self.assertEqual({d["field"] for d in diff.compare_issue(server["PLAT-3"], cloud["PLAT-3"], context())}, {"description"})
+        self.assertEqual({d["field"] for d in diff.compare_issue(server["PLAT-3"], cloud["PLAT-3"], context())},
+                         {"description", "comments", "attachments", "attachment bytes"})
+
+
+class CountTests(unittest.TestCase):
+    def test_equal_counts(self):
+        server, cloud = issues()
+        self.assertEqual(diff.count_diffs(server["PLAT-1"], cloud["PLAT-1"]), [])
+
+    def test_missing_comment_and_attachment(self):
+        server, cloud = issues()
+        found = diff.count_diffs(server["PLAT-3"], cloud["PLAT-3"])
+        self.assertEqual([(d["field"], d["server"], d["cloud"]) for d in found], [("comments", 3, 2), ("attachments", 2, 1), ("attachment bytes", 350, 100)])
+
+    def test_same_count_but_a_smaller_file(self):
+        server, cloud = issues()
+        cloud["PLAT-1"]["fields"]["attachment"][0]["size"] = 100
+        found = diff.count_diffs(server["PLAT-1"], cloud["PLAT-1"])
+        self.assertEqual([d["field"] for d in found], ["attachment bytes"])
+
+    def test_issue_without_comment_block(self):
+        self.assertEqual(diff.count_diffs({"key": "A-1", "fields": {}}, {"key": "A-1", "fields": {}}), [])
 
 
 class TextTests(unittest.TestCase):
