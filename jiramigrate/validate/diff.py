@@ -127,6 +127,26 @@ def count_diffs(server_issue, cloud_issue):
     return [diff(key, name, a, b) for name, a, b in (comments, files, size) if a != b]
 
 
+def link_signatures(issue):
+    """{'blocks PLAT-3', 'is blocked by PLAT-1', ...} read from issuelinks."""
+    found = set()
+    for entry in issue["fields"].get("issuelinks") or []:
+        kind = entry.get("type") or {}
+        if "outwardIssue" in entry:
+            found.add("{} {}".format(kind.get("outward", kind.get("name", "")), entry["outwardIssue"]["key"]))
+        elif "inwardIssue" in entry:
+            found.add("{} {}".format(kind.get("inward", kind.get("name", "")), entry["inwardIssue"]["key"]))
+    return found
+
+
+def link_diffs(server_issue, cloud_issue):
+    """Links that exist on only one side. Each link is one row, so a lost link is easy to find."""
+    key = server_issue["key"]
+    theirs, ours = link_signatures(server_issue), link_signatures(cloud_issue)
+    return ([diff(key, "link", signature, "(missing)", "missing-link") for signature in sorted(theirs - ours)]
+            + [diff(key, "link", "(none)", signature, "extra-link") for signature in sorted(ours - theirs)])
+
+
 def compare_issue(server_issue, cloud_issue, ctx):
-    return (count_diffs(server_issue, cloud_issue) + scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
+    return (link_diffs(server_issue, cloud_issue) + count_diffs(server_issue, cloud_issue) + scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
             + set_diffs(server_issue, cloud_issue) + text_diffs(server_issue, cloud_issue, ctx))

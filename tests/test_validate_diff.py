@@ -93,6 +93,31 @@ class PeopleAndSetTests(unittest.TestCase):
         self.assertEqual({d["field"] for d in diff.compare_issue(server["OPS-1"], cloud["OPS-1"], context())}, {"assignee", "reporter", "labels"})
         self.assertEqual({d["field"] for d in diff.compare_issue(server["PLAT-3"], cloud["PLAT-3"], context())},
                          {"description", "comments", "attachments", "attachment bytes"})
+        self.assertEqual({d["field"] for d in diff.compare_issue(server["PLAT-2"], cloud["PLAT-2"], context())}, {"link"})
+
+
+class LinkTests(unittest.TestCase):
+    def test_matching_links(self):
+        server, cloud = issues()
+        self.assertEqual(diff.link_diffs(server["PLAT-1"], cloud["PLAT-1"]), [])
+        self.assertEqual(diff.link_signatures(server["PLAT-3"]), {"is blocked by PLAT-1"})
+
+    def test_link_lost_in_migration(self):
+        server, cloud = issues()
+        found = diff.link_diffs(server["PLAT-2"], cloud["PLAT-2"])
+        self.assertEqual([(d["field"], d["server"], d["cloud"], d["status"]) for d in found], [("link", "relates to OPS-1", "(missing)", "missing-link")])
+
+    def test_extra_link_on_cloud(self):
+        server, cloud = issues()
+        cloud["OPS-1"]["fields"]["issuelinks"] = [{"type": {"name": "Blocks", "inward": "is blocked by", "outward": "blocks"}, "inwardIssue": {"key": "OPS-9"}}]
+        found = diff.link_diffs(server["OPS-1"], cloud["OPS-1"])
+        self.assertEqual([(d["server"], d["cloud"], d["status"]) for d in found], [("(none)", "is blocked by OPS-9", "extra-link")])
+
+    def test_a_link_pointing_the_other_way_is_a_difference(self):
+        server, cloud = issues()
+        cloud["PLAT-1"]["fields"]["issuelinks"] = [{"type": {"name": "Blocks", "inward": "is blocked by", "outward": "blocks"}, "inwardIssue": {"key": "PLAT-3"}}]
+        found = diff.link_diffs(server["PLAT-1"], cloud["PLAT-1"])
+        self.assertEqual({d["status"] for d in found}, {"missing-link", "extra-link"})
 
 
 class CountTests(unittest.TestCase):
