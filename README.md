@@ -31,6 +31,14 @@ Status: just started. Audits first.
 The map commands need the Cloud settings too. Each writes a JSON mapping file
 (`version`, `kind`, `summary`, `items`) next to the table it prints.
 
+    python -m jiramigrate validate counts --snapshot before.json
+    python -m jiramigrate validate sample --sample 50 --users-map users.json --names-map names.json
+    python -m jiramigrate validate all
+
+Validation only prints problems (use `--all-rows` for everything), writes its verdict to
+stderr, and exits with 1 when something differs. Sampling is reproducible: the same `--seed`
+picks the same issues.
+
 Every audit takes `--format table|csv|json`.
 
 ## Configuration

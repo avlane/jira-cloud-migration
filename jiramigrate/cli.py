@@ -9,6 +9,10 @@ from .audit import addons as audit_addons
 from .audit import attachments as audit_attachments
 from .audit import fields as audit_fields
 from .audit import users as audit_users
+from .validate import counts as validate_counts
+from .validate import diff as validate_diff
+from .validate import run as validate_run
+from .validate import summary as validate_summary
 
 FORMATS = ("table", "csv", "json")
 
@@ -34,12 +38,24 @@ def build_parser():
                            ("names", "statuses, issue types, priorities, resolutions by name"), ("options", "select field options missing on Cloud")):
         p = mapping.add_parser(name, parents=[common], help=helptext)
         p.add_argument("--output", "-o", metavar="FILE", help="also write the mapping file (JSON) here")
+    validate = top.add_parser("validate", help="compare the Server and Cloud sites after the migration").add_subparsers(dest="what", required=True)
+    for name, helptext in (("counts", "issue counts per project"), ("sample", "field-level comparison of sampled issues"), ("all", "both of the above")):
+        p = validate.add_parser(name, parents=[common], help=helptext)
+        p.add_argument("--project", action="append", metavar="KEY", help="project to check (repeatable); default is every project")
+        p.add_argument("--all-rows", action="store_true", help="show passing checks too")
+        if name != "counts":
+            p.add_argument("--sample", type=int, default=25, metavar="N", help="issues to sample per project (default 25)")
+            p.add_argument("--seed", default="1", help="sampling seed; the same seed picks the same issues")
+            p.add_argument("--users-map", metavar="FILE", help="users mapping file from `map users`")
+            p.add_argument("--names-map", metavar="FILE", help="names mapping file from `map names` (edit cloudName where you renamed things)")
+        if name != "sample":
+            p.add_argument("--snapshot", metavar="FILE", help="use the counts recorded by `snapshot` instead of counting the Server again")
     return parser
 
 
-def make_cloud():
+def make_cloud(prefix="/rest/api/3/"):
     settings = config.cloud_from_env()
-    return Api(settings.url, auth=(settings.email, settings.token), prefix="/rest/api/3/")
+    return Api(settings.url, auth=(settings.email, settings.token), prefix=prefix)
 
 
 def make_server():
@@ -107,6 +123,41 @@ def map_command(server, cloud, args, out):
     return 0
 
 
+def load_context(args):
+    """Users and names mappings from the files given on the command line."""
+    users, names = {}, {}
+    if getattr(args, "users_map", None):
+        for item in mapfile.read(args.users_map, "users")["items"]:
+            if item.get("accountId"):
+                users[item["serverName"]] = item["accountId"]
+    if getattr(args, "names_map", None):
+        for item in mapfile.read(args.names_map, "names")["items"]:
+            if item.get("cloudName") and item["cloudName"] != item["serverName"]:
+                names.setdefault(item["kind"], {})[item["serverName"]] = item["cloudName"]
+    return validate_diff.Context(users=users, names=names)
+
+
+def validate_command(server, cloud, args, out):
+    rows, sampled = [], 0
+    projects = args.project or None
+    if args.what in ("counts", "all"):
+        recorded = snapshot.load(args.snapshot) if getattr(args, "snapshot", None) else None
+        rows.extend(validate_counts.compare(server, cloud, projects, recorded))
+    if args.what in ("sample", "all"):
+        ctx = load_context(args)
+        keys = projects or sorted(p["key"] for p in server.get("project"))
+        for project in keys:
+            found, picked = validate_run.compare_sample(server, cloud, project, args.sample, args.seed, ctx)
+            rows.extend(found)
+            sampled += len(picked)
+    shown = rows if args.all_rows else validate_summary.problems(rows) + [r for r in rows if r["status"] in validate_summary.WARNINGS]
+    emit(shown, validate_summary.COLUMNS, args, out)
+    totals = validate_summary.summarize(rows, sampled)
+    for line in validate_summary.describe(totals):
+        print(line, file=sys.stderr)
+    return validate_summary.exit_code(rows)
+
+
 def main(argv=None, server=None, out=None, cloud=None):
     out = out if out is not None else sys.stdout
     args = build_parser().parse_args(argv)
@@ -114,6 +165,8 @@ def main(argv=None, server=None, out=None, cloud=None):
         server = server or make_server()
         if args.command == "map":
             return map_command(server, cloud or make_cloud(), args, out)
+        if args.command == "validate":
+            return validate_command(server, cloud or make_cloud("/rest/api/2/"), args, out)
         if args.command == "snapshot":
             snap = snapshot.take(server)
             snapshot.save(args.output, snap)

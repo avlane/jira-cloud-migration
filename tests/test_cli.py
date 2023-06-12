@@ -50,6 +50,60 @@ class MapCliTests(unittest.TestCase):
         self.assertIn("status,Open,10000,,,missing", out.getvalue())
 
 
+class ValidateCliTests(unittest.TestCase):
+    def run_validate(self, argv, server_session, cloud_session):
+        import contextlib
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stderr(err):
+            code = cli.main(argv, server=Api("https://jira.corp.example.com", session=server_session), out=out,
+                            cloud=Api("https://example.atlassian.net", prefix="/rest/api/2/", session=cloud_session))
+        return code, out.getvalue(), err.getvalue()
+
+    def test_counts(self):
+        from tests.test_validate_counts import sites
+        (_, server_session), (_, cloud_session) = sites()
+        code, text, err = self.run_validate(["validate", "counts", "--project", "PLAT", "--project", "OPS", "--format", "csv"], server_session, cloud_session)
+        self.assertEqual(code, 1)
+        lines = text.splitlines()
+        self.assertEqual(lines[0], "check,subject,field,server,cloud,status,note")
+        self.assertEqual(len(lines), 5)
+        self.assertIn("OPS,issues,845,840,cloud-has-fewer", lines[1])
+        self.assertIn("counts: 8 compared, 4 differ", err)
+        self.assertIn("result: FAIL (4 problems)", err)
+
+    def test_all_rows_shows_passing_checks(self):
+        from tests.test_validate_counts import sites
+        (_, server_session), (_, cloud_session) = sites()
+        code, text, _ = self.run_validate(["validate", "counts", "--project", "PLAT", "--all-rows", "--format", "csv"], server_session, cloud_session)
+        self.assertEqual(code, 0)
+        self.assertEqual(len(text.splitlines()), 5)
+
+    def test_sample_with_mapping_files(self):
+        import os
+        import tempfile
+        from jiramigrate import mapfile
+        from tests.test_validate_run import make_site, SERVER, CLOUD
+        server = {k: v for k, v in SERVER.items() if k.startswith("PLAT")}
+        cloud = {k: v for k, v in CLOUD.items() if k.startswith("PLAT")}
+        server_api = make_site(server, "https://jira.corp.example.com")
+        cloud_api = make_site(cloud, "https://example.atlassian.net")
+        names = [{"kind": k, "serverName": s, "cloudName": c, "status": "matched"} for k, pairs in load("sample_names.json").items() for s, c in pairs.items()]
+        users = [{"serverName": s, "accountId": a, "status": "matched"} for s, a in load("sample_users.json").items()]
+        with tempfile.TemporaryDirectory() as tmp:
+            names_path, users_path = os.path.join(tmp, "names.json"), os.path.join(tmp, "users.json")
+            mapfile.write(names_path, mapfile.build("names", names, "s", "c"))
+            mapfile.write(users_path, mapfile.build("users", users, "s", "c"))
+            out, err = io.StringIO(), io.StringIO()
+            import contextlib
+            with contextlib.redirect_stderr(err):
+                code = cli.main(["validate", "sample", "--project", "PLAT", "--sample", "10", "--names-map", names_path, "--users-map", users_path, "--format", "json"],
+                                server=server_api, cloud=cloud_api, out=out)
+        found = {(r["subject"], r["field"]) for r in json.loads(out.getvalue())}
+        self.assertEqual(code, 1)
+        self.assertEqual(found, {("PLAT-2", "link"), ("PLAT-3", "description"), ("PLAT-3", "comments"), ("PLAT-3", "attachments"), ("PLAT-3", "attachment bytes")})
+        self.assertIn("sample: 3 issues checked, 2 with differences", err.getvalue())
+
+
 class AuditCliTests(unittest.TestCase):
     def test_audit_fields_lists_duplicates(self):
         session = FakeSession().add("GET", r"/rest/api/2/field$", load("server_fields.json"))
