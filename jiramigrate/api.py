@@ -1,5 +1,12 @@
 """A small REST client used for both the Server/DC side and the Cloud side."""
+import logging
 import time
+
+
+log = logging.getLogger("jiramigrate.api")
+
+# Gateway errors during short outages; only reads are repeated.
+TRANSIENT = (502, 503, 504)
 
 
 class ApiError(Exception):
@@ -56,7 +63,15 @@ class Api:
             resp = self.session.request(method, url, params=params, json=body, headers=headers, timeout=self.timeout, **extra)
             if resp.status_code == 429 and attempt < self.max_retries:
                 attempt += 1
-                self.sleep(retry_after(resp))
+                delay = retry_after(resp)
+                log.warning("rate limited on %s; waiting %ss (retry %d of %d)", url, delay, attempt, self.max_retries)
+                self.sleep(delay)
+                continue
+            if resp.status_code in TRANSIENT and method.upper() == "GET" and attempt < self.max_retries:
+                attempt += 1
+                delay = min(2 ** attempt, 30)
+                log.warning("HTTP %s from %s; retrying in %ss (retry %d of %d)", resp.status_code, url, delay, attempt, self.max_retries)
+                self.sleep(delay)
                 continue
             break
         if resp.status_code not in expected:

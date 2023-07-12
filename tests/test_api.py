@@ -56,6 +56,37 @@ class RequestTests(unittest.TestCase):
         self.assertEqual(sleeps, [4])
 
 
+class TransientErrorTests(unittest.TestCase):
+    def test_gateway_errors_on_reads_are_retried_with_backoff(self):
+        session = FakeSession().add("GET", r"/field$", Seq(FakeResponse(503), FakeResponse(502), {"ok": 1}))
+        sleeps = []
+        api = Api("https://jira.corp.example.com", session=session, sleep=sleeps.append)
+        self.assertEqual(api.get("field"), {"ok": 1})
+        self.assertEqual(sleeps, [2, 4])
+
+    def test_gives_up_eventually(self):
+        session = FakeSession().add("GET", r"/field$", FakeResponse(504, "gateway timeout"))
+        api = Api("https://jira.corp.example.com", session=session, sleep=lambda s: None, max_retries=2)
+        with self.assertRaises(ApiError) as ctx:
+            api.get("field")
+        self.assertEqual(ctx.exception.status, 504)
+        self.assertEqual(len(session.calls), 3)
+
+    def test_writes_are_not_repeated(self):
+        session = FakeSession().add("POST", r"/thing$", FakeResponse(503, "unavailable"))
+        api = Api("https://jira.corp.example.com", session=session, sleep=lambda s: None)
+        with self.assertRaises(ApiError):
+            api.request("POST", "thing", body={})
+        self.assertEqual(len(session.calls), 1)
+
+    def test_waits_are_logged(self):
+        session = FakeSession().add("GET", r"/field$", Seq(FakeResponse(429, None, {"Retry-After": "3"}), {"ok": 1}))
+        api = Api("https://jira.corp.example.com", session=session, sleep=lambda s: None)
+        with self.assertLogs("jiramigrate.api", level="WARNING") as captured:
+            api.get("field")
+        self.assertIn("waiting 3s (retry 1 of 5)", captured.output[0])
+
+
 class PagingTests(unittest.TestCase):
     def test_bare_arrays_and_paged_objects(self):
         items = [{"n": n} for n in range(7)]
