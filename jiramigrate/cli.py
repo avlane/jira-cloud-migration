@@ -9,6 +9,7 @@ from .audit import addons as audit_addons
 from .audit import attachments as audit_attachments
 from .audit import fields as audit_fields
 from .audit import users as audit_users
+from .validate import cache as validate_cache
 from .validate import counts as validate_counts
 from .validate import diff as validate_diff
 from .validate import run as validate_run
@@ -46,6 +47,7 @@ def build_parser():
         if name != "counts":
             p.add_argument("--sample", type=int, default=25, metavar="N", help="issues to sample per project (default 25)")
             p.add_argument("--seed", default="1", help="sampling seed; the same seed picks the same issues")
+            p.add_argument("--cache", metavar="DIR", help="keep the sampled Server issues here and reuse them next time (only for a frozen Server)")
             p.add_argument("--users-map", metavar="FILE", help="users mapping file from `map users`")
             p.add_argument("--names-map", metavar="FILE", help="names mapping file from `map names` (edit cloudName where you renamed things)")
         if name != "sample":
@@ -145,9 +147,10 @@ def validate_command(server, cloud, args, out):
         rows.extend(validate_counts.compare(server, cloud, projects, recorded))
     if args.what in ("sample", "all"):
         ctx = load_context(args)
+        cache = validate_cache.JsonCache(args.cache) if args.cache else None
         keys = projects or sorted(p["key"] for p in server.get("project"))
         for project in keys:
-            found, picked = validate_run.compare_sample(server, cloud, project, args.sample, args.seed, ctx)
+            found, picked = validate_run.compare_sample(server, cloud, project, args.sample, args.seed, ctx, cache)
             rows.extend(found)
             sampled += len(picked)
     shown = rows if args.all_rows else validate_summary.problems(rows) + [r for r in rows if r["status"] in validate_summary.WARNINGS]

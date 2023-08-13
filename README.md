@@ -35,6 +35,9 @@ The map commands need the Cloud settings too. Each writes a JSON mapping file
     python -m jiramigrate validate sample --sample 50 --users-map users.json --names-map names.json
     python -m jiramigrate validate all
 
+With `--cache DIR` the sampled Server issues are kept and reused on the next run. Use it only once the Server is
+read-only for the final migration: cached copies are never refreshed.
+
 Validation only prints problems (use `--all-rows` for everything), writes its verdict to
 stderr, and exits with 1 when something differs. Sampling is reproducible: the same `--seed`
 picks the same issues.

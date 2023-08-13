@@ -38,10 +38,22 @@ def pick_keys(server, project, n, seed):
     return sorted([k for k in keys if k in existing][:n], key=key_number)
 
 
-def fetch_issues(api, keys, fields=FIELDS):
-    """{key: issue} for the keys that exist on that site."""
-    found = {}
-    for batch in chunks(list(keys), 50):
+def fetch_issues(api, keys, fields=FIELDS, cache=None):
+    """{key: issue} for the keys that exist on that site.
+
+    With a cache, issues fetched on an earlier run are reused. Only do that for a site that is not
+    changing (the Server, once it is frozen for the final migration): cached copies are never refreshed.
+    """
+    found, missing = {}, []
+    for key in keys:
+        cached = cache.get("issue-" + key) if cache else None
+        if cached and cached.get("fields") == list(fields):
+            found[key] = cached["issue"]
+        else:
+            missing.append(key)
+    for batch in chunks(missing, 50):
         for issue in api.search("key in ({})".format(", ".join(batch)), fields=fields, page_size=50):
             found[issue["key"]] = issue
+            if cache:
+                cache.set("issue-" + issue["key"], {"fields": list(fields), "issue": issue})
     return found
