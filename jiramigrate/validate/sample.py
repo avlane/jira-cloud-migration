@@ -20,22 +20,39 @@ def newest_number(server, project):
     return 0
 
 
-def pick_keys(server, project, n, seed):
+def edge_keys(server, project):
+    """The oldest and the newest issue of a project by creation time.
+
+    Imports tend to go wrong at the ends: the first issue exercises old field values and schemes,
+    the last one shows whether the final delta made it across.
+    """
+    found = []
+    for order in ("ASC", "DESC"):
+        for issue in server.search('project = "{}" ORDER BY created {}'.format(project, order), fields=("key",), page_size=1):
+            found.append(issue["key"])
+            break
+    return list(dict.fromkeys(found))
+
+
+def pick_keys(server, project, n, seed, edges=True):
     """Up to n existing issue keys of a project, the same ones every time for the same seed.
 
-    Random issue numbers are drawn up to the newest key; some of them no longer exist (deleted or moved
-    issues), so twice as many are drawn as needed and checked with one `key in (...)` query.
+    The oldest and newest issues come first (unless edges is False); the rest are random. Random issue
+    numbers are drawn up to the newest key; some of them no longer exist (deleted or moved issues), so
+    twice as many are drawn as needed and checked with one `key in (...)` query.
     """
     top = newest_number(server, project)
     if top == 0:
         return []
+    fixed = edge_keys(server, project)[:n] if edges else []
     rng = random.Random("{}:{}".format(seed, project))
     keys = ["{}-{}".format(project, number) for number in rng.sample(range(1, top + 1), min(top, n * 2))]
     existing = set()
     for batch in chunks(keys, 100):
         for issue in server.search("key in ({})".format(", ".join(batch)), fields=("key",), page_size=100):
             existing.add(issue["key"])
-    return sorted([k for k in keys if k in existing][:n], key=key_number)
+    chosen = list(dict.fromkeys(fixed + [k for k in keys if k in existing]))[:n]
+    return sorted(chosen, key=key_number)
 
 
 def fetch_issues(api, keys, fields=FIELDS, cache=None):

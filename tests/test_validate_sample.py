@@ -10,6 +10,9 @@ EXISTING = {"PLAT-%d" % n for n in range(1, 41)} - {"PLAT-7", "PLAT-8", "PLAT-9"
 def jql_search(call):
     """A tiny JQL-aware search: the newest key, or key in (...)."""
     jql = call["params"]["jql"]
+    if "ORDER BY created" in jql:
+        key = "PLAT-1" if "ASC" in jql else "PLAT-40"
+        return {"startAt": 0, "maxResults": 1, "total": 1, "issues": [{"key": key, "fields": {}}]}
     if "ORDER BY key DESC" in jql:
         return {"startAt": 0, "maxResults": 1, "total": 1, "issues": [{"key": "PLAT-40", "fields": {}}]}
     wanted = [k.strip() for k in jql[jql.index("(") + 1:jql.rindex(")")].split(",")]
@@ -38,6 +41,24 @@ class PickKeysTests(unittest.TestCase):
         self.assertTrue(set(keys) <= EXISTING)
         self.assertEqual(keys, sorted(keys, key=sample.key_number))
         self.assertEqual(len(set(keys)), 10)
+
+    def test_oldest_and_newest_are_always_included(self):
+        server, _ = make_server()
+        for seed in range(20):
+            keys = sample.pick_keys(server, "PLAT", 5, seed)
+            self.assertIn("PLAT-1", keys)
+            self.assertIn("PLAT-40", keys)
+            self.assertEqual(len(keys), 5)
+
+    def test_edges_can_be_turned_off(self):
+        server, session = make_server()
+        keys = sample.pick_keys(server, "PLAT", 5, seed=3, edges=False)
+        self.assertEqual(len(keys), 5)
+        self.assertEqual([c for c in session.calls if "ORDER BY created" in c["params"]["jql"]], [])
+
+    def test_a_sample_of_one_is_just_the_oldest(self):
+        server, _ = make_server()
+        self.assertEqual(sample.pick_keys(server, "PLAT", 1, seed=5), ["PLAT-1"])
 
     def test_small_projects_return_what_exists(self):
         server, _ = make_server()
