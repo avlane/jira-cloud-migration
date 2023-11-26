@@ -37,6 +37,32 @@ class RunTests(unittest.TestCase):
                          {("PLAT-2", "link"), ("PLAT-3", "description"), ("PLAT-3", "comments"), ("PLAT-3", "attachments"), ("PLAT-3", "attachment bytes")})
 
 
+    def test_an_issue_missing_on_cloud_is_a_finding_not_a_crash(self):
+        server = make_site({k: v for k, v in SERVER.items() if k.startswith("OPS")}, "https://jira.corp.example.com")
+        cloud = make_site({k: v for k, v in CLOUD.items() if k.startswith("OPS") and k != "OPS-2"}, "https://example.atlassian.net")
+        rows, keys = run.compare_sample(server, cloud, "OPS", 10, 1, context())
+        self.assertEqual(keys, ["OPS-1", "OPS-2"])
+        missing = [r for r in rows if r["status"] == "missing-on-cloud"]
+        self.assertEqual([(r["subject"], r["field"], r["cloud"]) for r in missing], [("OPS-2", "issue", "(not found)")])
+        self.assertEqual(summary.exit_code(missing), 1)
+
+    def test_issues_that_vanished_from_the_server_are_skipped(self):
+        server = make_site({"PLAT-1": SERVER["PLAT-1"]}, "https://jira.corp.example.com")
+        original = server.session.routes[0]
+        calls = []
+
+        def flaky(call):
+            calls.append(call)
+            if "ORDER BY" not in call["params"]["jql"] and len(calls) > 3:
+                return {"startAt": 0, "maxResults": 100, "total": 0, "issues": []}
+            return original[2](call)
+
+        server.session.routes[0] = (original[0], original[1], flaky)
+        cloud = make_site(CLOUD, "https://example.atlassian.net")
+        rows, keys = run.compare_sample(server, cloud, "PLAT", 3, 1, context())
+        self.assertEqual(rows, [])
+
+
 class SummaryTests(unittest.TestCase):
     ROWS = [
         {"check": "count", "subject": "PLAT", "field": "issues", "status": "ok"},

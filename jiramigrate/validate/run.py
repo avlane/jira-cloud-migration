@@ -12,5 +12,10 @@ def compare_sample(server, cloud, project, n, seed, ctx, cache=None):
     ours = sample.fetch_issues(cloud, keys)
     rows = []
     for key in keys:
+        if key not in theirs:  # moved or deleted since the sample was drawn
+            continue
+        if key not in ours:
+            rows.append(diff.diff(key, "issue", key, "(not found)", "missing-on-cloud"))
+            continue
         rows.extend(diff.compare_issue(theirs[key], ours[key], ctx))
     return rows, keys
