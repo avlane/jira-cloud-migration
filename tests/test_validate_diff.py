@@ -96,6 +96,27 @@ class PeopleAndSetTests(unittest.TestCase):
         self.assertEqual({d["field"] for d in diff.compare_issue(server["PLAT-2"], cloud["PLAT-2"], context())}, {"link"})
 
 
+class TimeTests(unittest.TestCase):
+    def test_no_time_logged_on_either_side(self):
+        server, cloud = issues()
+        self.assertEqual(diff.time_diffs(server["PLAT-1"], cloud["PLAT-1"]), [])
+
+    def test_logged_time_that_did_not_arrive(self):
+        server, cloud = issues()
+        server["PLAT-1"]["fields"]["timespent"] = 28800
+        server["PLAT-1"]["fields"]["timeoriginalestimate"] = 14400
+        cloud["PLAT-1"]["fields"]["timespent"] = 25200
+        cloud["PLAT-1"]["fields"]["timeoriginalestimate"] = 14400
+        found = diff.time_diffs(server["PLAT-1"], cloud["PLAT-1"])
+        self.assertEqual([(d["field"], d["server"], d["cloud"]) for d in found], [("time spent (s)", 28800, 25200)])
+
+    def test_none_and_zero_are_the_same(self):
+        server, cloud = issues()
+        server["PLAT-2"]["fields"]["timespent"] = None
+        cloud["PLAT-2"]["fields"]["timespent"] = 0
+        self.assertEqual(diff.time_diffs(server["PLAT-2"], cloud["PLAT-2"]), [])
+
+
 class LinkTests(unittest.TestCase):
     def test_matching_links(self):
         server, cloud = issues()

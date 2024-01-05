@@ -127,6 +127,18 @@ def count_diffs(server_issue, cloud_issue):
     return [diff(key, name, a, b) for name, a, b in (comments, files, size) if a != b]
 
 
+def time_diffs(server_issue, cloud_issue):
+    """Logged time and the original estimate, in seconds. A missing value counts as zero."""
+    key = server_issue["key"]
+    out = []
+    for field, label in (("timespent", "time spent (s)"), ("timeoriginalestimate", "original estimate (s)")):
+        a = server_issue["fields"].get(field) or 0
+        b = cloud_issue["fields"].get(field) or 0
+        if a != b:
+            out.append(diff(key, label, a, b))
+    return out
+
+
 def link_signatures(issue):
     """{'blocks PLAT-3', 'is blocked by PLAT-1', ...} read from issuelinks."""
     found = set()
@@ -148,5 +160,5 @@ def link_diffs(server_issue, cloud_issue):
 
 
 def compare_issue(server_issue, cloud_issue, ctx):
-    return (link_diffs(server_issue, cloud_issue) + count_diffs(server_issue, cloud_issue) + scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
+    return (link_diffs(server_issue, cloud_issue) + time_diffs(server_issue, cloud_issue) + count_diffs(server_issue, cloud_issue) + scalar_diffs(server_issue, cloud_issue, ctx) + people_diffs(server_issue, cloud_issue, ctx)
             + set_diffs(server_issue, cloud_issue) + text_diffs(server_issue, cloud_issue, ctx))

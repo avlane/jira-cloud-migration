@@ -2,7 +2,7 @@
 import random
 
 FIELDS = ("summary", "issuetype", "status", "priority", "resolution", "assignee", "reporter", "labels", "components",
-          "fixVersions", "description", "comment", "attachment", "issuelinks")
+          "fixVersions", "description", "comment", "attachment", "issuelinks", "timespent", "timeoriginalestimate")
 
 
 def key_number(key):
