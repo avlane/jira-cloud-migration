@@ -20,6 +20,9 @@ Status: just started. Audits first.
     python -m jiramigrate audit users             # users without a usable email address
 
     python -m jiramigrate audit attachments --limit-mb 20
+    python -m jiramigrate audit workflows        # workflows no project uses
+    python -m jiramigrate audit schemes          # unused permission and notification schemes
+    python -m jiramigrate audit addons --cloud-apps cloud-apps.json
 
     python -m jiramigrate snapshot -o before.json   # per-project counts, to compare with after the migration
 

@@ -8,7 +8,9 @@ from .api import Api, ApiError
 from .audit import addons as audit_addons
 from .audit import attachments as audit_attachments
 from .audit import fields as audit_fields
+from .audit import schemes as audit_schemes
 from .audit import users as audit_users
+from .audit import workflows as audit_workflows
 from .validate import cache as validate_cache
 from .validate import counts as validate_counts
 from .validate import diff as validate_diff
@@ -29,6 +31,8 @@ def build_parser():
     audit.add_parser("users", parents=[common], help="users without a usable email address")
     p_addons = audit.add_parser("addons", parents=[common], help="user-installed apps")
     p_addons.add_argument("--cloud-apps", metavar="FILE", help="JSON file of {app key: {cloud: available|none, note}} to check against")
+    audit.add_parser("workflows", parents=[common], help="workflows that no project uses")
+    audit.add_parser("schemes", parents=[common], help="permission and notification schemes that no project uses")
     p_att = audit.add_parser("attachments", parents=[common], help="attachments larger than a size limit")
     p_att.add_argument("--limit-mb", type=float, default=audit_attachments.DEFAULT_LIMIT_MB, help="size limit in MB (default 10)")
     p_att.add_argument("--totals", action="store_true", help="show total attachment size per project instead")
@@ -89,6 +93,15 @@ def audit_attachments_command(server, args, out):
         return emit(audit_attachments.totals_by_project(server), ("project", "files", "sizeMB"), args, out)
     rows = audit_attachments.oversized(server, args.limit_mb)
     return emit(rows, ("project", "issue", "filename", "sizeMB", "mimeType", "author"), args, out)
+
+
+def audit_workflows_command(server, args, out):
+    rows = audit_workflows.report(server)
+    return emit(rows, ("name", "steps", "default", "projects", "lastModified", "finding"), args, out)
+
+
+def audit_schemes_command(server, args, out):
+    return emit(audit_schemes.report(server), ("kind", "id", "name", "projects", "finding"), args, out)
 
 
 def audit_addons_command(server, args, out):
@@ -179,6 +192,10 @@ def main(argv=None, server=None, out=None, cloud=None):
             return audit_fields_command(server, args, out)
         if args.command == "audit" and args.what == "users":
             return audit_users_command(server, args, out)
+        if args.command == "audit" and args.what == "workflows":
+            return audit_workflows_command(server, args, out)
+        if args.command == "audit" and args.what == "schemes":
+            return audit_schemes_command(server, args, out)
         if args.command == "audit" and args.what == "addons":
             return audit_addons_command(server, args, out)
         if args.command == "audit" and args.what == "attachments":

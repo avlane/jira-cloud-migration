@@ -131,6 +131,17 @@ class AuditCliTests(unittest.TestCase):
         code, text = run(["audit", "attachments", "--totals", "--format", "csv"], session)
         self.assertEqual(text.splitlines()[1], "OPS,3,80.4")
 
+    def test_audit_workflows_and_schemes(self):
+        from tests.test_audit_schemes import make_server as scheme_server
+        from tests.test_audit_workflows import make_server as workflow_server
+        _, session = workflow_server()
+        code, text = run(["audit", "workflows", "--format", "csv"], session)
+        self.assertEqual(code, 0)
+        self.assertIn("Old Release Flow,4,no,,2021-03-14,unused", text)
+        _, session = scheme_server()
+        code, text = run(["audit", "schemes", "--format", "csv"], session)
+        self.assertIn("permission,10002,2018 Contractor Access,,unused", text)
+
     def test_audit_addons(self):
         session = FakeSession().add("GET", r"/rest/plugins/1.0/$", load("server_plugins.json"))
         code, text = run(["audit", "addons", "--format", "csv"], session)
