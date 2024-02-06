@@ -1,11 +1,13 @@
 """Command line entry point: jira-migrate <command>"""
 import argparse
 import json
+import os
 import sys
 
 from . import config, fieldmap, mapfile, namemap, options, report, snapshot, usermap
 from .api import Api, ApiError
 from .audit import addons as audit_addons
+from .audit import bundle as audit_bundle
 from .audit import attachments as audit_attachments
 from .audit import fields as audit_fields
 from .audit import schemes as audit_schemes
@@ -31,6 +33,10 @@ def build_parser():
     audit.add_parser("users", parents=[common], help="users without a usable email address")
     p_addons = audit.add_parser("addons", parents=[common], help="user-installed apps")
     p_addons.add_argument("--cloud-apps", metavar="FILE", help="JSON file of {app key: {cloud: available|none, note}} to check against")
+    p_all = audit.add_parser("all", parents=[common], help="run every audit and save each result in a folder")
+    p_all.add_argument("--output-dir", "-d", metavar="DIR", help="write <audit>.json for each audit here")
+    p_all.add_argument("--cloud-apps", metavar="FILE", help="Cloud availability file for the app audit")
+    p_all.add_argument("--limit-mb", type=float, default=audit_attachments.DEFAULT_LIMIT_MB, help="attachment size limit (default 10)")
     audit.add_parser("workflows", parents=[common], help="workflows that no project uses")
     audit.add_parser("schemes", parents=[common], help="permission and notification schemes that no project uses")
     p_att = audit.add_parser("attachments", parents=[common], help="attachments larger than a size limit")
@@ -93,6 +99,21 @@ def audit_attachments_command(server, args, out):
         return emit(audit_attachments.totals_by_project(server), ("project", "files", "sizeMB"), args, out)
     rows = audit_attachments.oversized(server, args.limit_mb)
     return emit(rows, ("project", "issue", "filename", "sizeMB", "mimeType", "author"), args, out)
+
+
+def audit_all_command(server, args, out):
+    cloud_apps = None
+    if args.cloud_apps:
+        with open(args.cloud_apps, encoding="utf-8") as handle:
+            cloud_apps = json.load(handle)
+    results = audit_bundle.run_all(server, cloud_apps, args.limit_mb)
+    if args.output_dir:
+        os.makedirs(args.output_dir, exist_ok=True)
+        for name, rows in results.items():
+            with open(os.path.join(args.output_dir, name + ".json"), "w", encoding="utf-8") as handle:
+                json.dump(rows, handle, indent=2)
+                handle.write("\n")
+    return emit(audit_bundle.headline(results), ("audit", "rows"), args, out)
 
 
 def audit_workflows_command(server, args, out):
@@ -192,6 +213,8 @@ def main(argv=None, server=None, out=None, cloud=None):
             return audit_fields_command(server, args, out)
         if args.command == "audit" and args.what == "users":
             return audit_users_command(server, args, out)
+        if args.command == "audit" and args.what == "all":
+            return audit_all_command(server, args, out)
         if args.command == "audit" and args.what == "workflows":
             return audit_workflows_command(server, args, out)
         if args.command == "audit" and args.what == "schemes":

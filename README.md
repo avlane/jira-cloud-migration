@@ -23,6 +23,7 @@ Status: just started. Audits first.
     python -m jiramigrate audit workflows        # workflows no project uses
     python -m jiramigrate audit schemes          # unused permission and notification schemes
     python -m jiramigrate audit addons --cloud-apps cloud-apps.json
+    python -m jiramigrate audit all -d audit/    # every audit, one JSON file each, plus a summary
 
     python -m jiramigrate snapshot -o before.json   # per-project counts, to compare with after the migration
 

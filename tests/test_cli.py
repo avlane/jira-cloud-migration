@@ -131,6 +131,22 @@ class AuditCliTests(unittest.TestCase):
         code, text = run(["audit", "attachments", "--totals", "--format", "csv"], session)
         self.assertEqual(text.splitlines()[1], "OPS,3,80.4")
 
+    def test_audit_all_writes_one_file_per_audit(self):
+        import os
+        import tempfile
+        from tests.test_audit_bundle import make_server
+        server = make_server()
+        out = io.StringIO()
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = os.path.join(tmp, "audit")
+            code = cli.main(["audit", "all", "-d", folder, "--format", "csv"], server=server, out=out)
+            self.assertEqual(sorted(os.listdir(folder)), ["addons.json", "attachments.json", "fields.json", "schemes.json", "users.json", "workflows.json"])
+            with open(os.path.join(folder, "workflows.json"), encoding="utf-8") as handle:
+                self.assertEqual(len(json.load(handle)), 2)
+        self.assertEqual(code, 0)
+        self.assertEqual(out.getvalue().splitlines()[0], "audit,rows")
+        self.assertIn("users,6", out.getvalue())
+
     def test_audit_workflows_and_schemes(self):
         from tests.test_audit_schemes import make_server as scheme_server
         from tests.test_audit_workflows import make_server as workflow_server
