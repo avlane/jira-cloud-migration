@@ -14,9 +14,19 @@ def _cell(value):
     return str(value)
 
 
+def _markdown(rows, columns):
+    """A GitHub-flavoured table for pasting into a ticket comment."""
+    lines = ["| " + " | ".join(columns) + " |", "| " + " | ".join("---" for _ in columns) + " |"]
+    for row in rows:
+        lines.append("| " + " | ".join(" ".join(_cell(row.get(col)).split()).replace("|", "\\|") for col in columns) + " |")
+    return "\n".join(lines) + "\n"
+
+
 def render(rows, columns, fmt="table"):
     if fmt == "json":
         return json.dumps(rows, indent=2) + "\n"
+    if fmt == "markdown":
+        return _markdown(rows, columns)
     cells = [[" ".join(_cell(row.get(col)).split()) if fmt == "table" else _cell(row.get(col)) for col in columns] for row in rows]
     if fmt == "csv":
         buf = io.StringIO()

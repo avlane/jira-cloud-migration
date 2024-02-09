@@ -19,7 +19,7 @@ from .validate import diff as validate_diff
 from .validate import run as validate_run
 from .validate import summary as validate_summary
 
-FORMATS = ("table", "csv", "json")
+FORMATS = ("table", "csv", "json", "markdown")
 
 
 def build_parser():

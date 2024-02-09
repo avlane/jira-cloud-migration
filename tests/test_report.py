@@ -23,6 +23,14 @@ class ReportTests(unittest.TestCase):
     def test_json(self):
         self.assertEqual(json.loads(report.render(ROWS, COLS, "json")), ROWS)
 
+    def test_markdown(self):
+        rows = [{"name": "a|b", "n": 1, "ok": True, "tags": ["x"]}, {"name": "multi\nline", "n": None, "ok": False}]
+        lines = report.render(rows, COLS, "markdown").splitlines()
+        self.assertEqual(lines[0], "| name | n | ok | tags |")
+        self.assertEqual(lines[1], "| --- | --- | --- | --- |")
+        self.assertEqual(lines[2], "| a\\|b | 1 | yes | x |")
+        self.assertEqual(lines[3], "| multi line |  | no |  |")
+
     def test_empty_and_unknown(self):
         self.assertEqual(report.render([], COLS), "(no rows)\n")
         with self.assertRaises(ValueError):

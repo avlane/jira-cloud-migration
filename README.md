@@ -46,7 +46,7 @@ Validation only prints problems (use `--all-rows` for everything), writes its ve
 stderr, and exits with 1 when something differs. Sampling is reproducible: the same `--seed`
 picks the same issues.
 
-Every audit takes `--format table|csv|json`.
+Every command takes `--format table|csv|json|markdown`; markdown pastes straight into a ticket.
 
 ## Configuration
 
