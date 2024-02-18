@@ -47,6 +47,19 @@ class RequestTests(unittest.TestCase):
             make(session).get("field")
         self.assertEqual(ctx.exception.status, 401)
 
+    def test_auth_and_permission_errors_explain_themselves(self):
+        for status, hint in ((401, "credentials"), (403, "Administer Jira"), (404, "does not exist on that Jira version")):
+            session = FakeSession().add("GET", r"/field$", FakeResponse(status, {"message": "no"}))
+            with self.assertRaises(ApiError) as ctx:
+                make(session).get("field")
+            self.assertIn(hint, str(ctx.exception))
+
+    def test_other_errors_have_no_hint(self):
+        session = FakeSession().add("GET", r"/field$", FakeResponse(400, {"message": "bad"}))
+        with self.assertRaises(ApiError) as ctx:
+            make(session).get("field")
+        self.assertNotIn("(check", str(ctx.exception))
+
     def test_429_is_retried(self):
         limited = FakeResponse(429, None, {"Retry-After": "4"})
         session = FakeSession().add("GET", r"/field$", Seq(limited, {"ok": 1}))

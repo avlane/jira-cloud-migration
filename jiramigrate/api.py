@@ -8,6 +8,12 @@ log = logging.getLogger("jiramigrate.api")
 # Gateway errors during short outages; only reads are repeated.
 TRANSIENT = (502, 503, 504)
 
+HINTS = {
+    401: "check the credentials: user and password, a personal access token, or on Cloud the email and API token",
+    403: "the account lacks permission for this; the audits need Administer Jira (system administrator for the app list)",
+    404: "this resource does not exist on that Jira version, or the project or issue is not visible to the account",
+}
+
 
 class ApiError(Exception):
     def __init__(self, message, status=None, url=None):
@@ -75,7 +81,10 @@ class Api:
                 continue
             break
         if resp.status_code not in expected:
-            raise ApiError("{} {} failed with HTTP {}: {}".format(method, url, resp.status_code, resp.text[:200]), resp.status_code, url)
+            message = "{} {} failed with HTTP {}: {}".format(method, url, resp.status_code, resp.text[:200])
+            if resp.status_code in HINTS:
+                message += " ({})".format(HINTS[resp.status_code])
+            raise ApiError(message, resp.status_code, url)
         if resp.status_code == 204 or not resp.text:
             return None
         return resp.json()
