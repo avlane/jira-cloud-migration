@@ -87,6 +87,12 @@ class SummaryTests(unittest.TestCase):
         self.assertEqual(summary.describe(summary.summarize(rows))[-1], "result: PASS")
         self.assertEqual(summary.exit_code(self.ROWS), 1)
 
+    def test_strict_mode_fails_on_warnings(self):
+        rows = [r for r in self.ROWS if r["status"] in ("ok", "unmapped-user")]
+        self.assertEqual(summary.exit_code(rows), 0)
+        self.assertEqual(summary.exit_code(rows, strict=True), 1)
+        self.assertEqual(summary.exit_code([r for r in rows if r["status"] == "ok"], strict=True), 0)
+
     def test_nothing_checked_passes(self):
         self.assertEqual(summary.describe(summary.summarize([])), ["result: PASS"])
 

@@ -54,6 +54,7 @@ def build_parser():
         p = validate.add_parser(name, parents=[common], help=helptext)
         p.add_argument("--project", action="append", metavar="KEY", help="project to check (repeatable); default is every project")
         p.add_argument("--all-rows", action="store_true", help="show passing checks too")
+        p.add_argument("--strict", action="store_true", help="also fail when a Server user is missing from the users mapping")
         if name != "counts":
             p.add_argument("--sample", type=int, default=25, metavar="N", help="issues to sample per project (default 25)")
             p.add_argument("--seed", default="1", help="sampling seed; the same seed picks the same issues")
@@ -192,7 +193,7 @@ def validate_command(server, cloud, args, out):
     totals = validate_summary.summarize(rows, sampled)
     for line in validate_summary.describe(totals):
         print(line, file=sys.stderr)
-    return validate_summary.exit_code(rows)
+    return validate_summary.exit_code(rows, args.strict)
 
 
 def main(argv=None, server=None, out=None, cloud=None):

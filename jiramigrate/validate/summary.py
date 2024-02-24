@@ -35,5 +35,8 @@ def describe(summary):
     return lines
 
 
-def exit_code(rows):
-    return 1 if problems(rows) else 0
+def exit_code(rows, strict=False):
+    """1 when anything differs. With strict, users missing from the mapping count as failures too."""
+    if problems(rows):
+        return 1
+    return 1 if strict and any(r["status"] in WARNINGS for r in rows) else 0
