@@ -37,6 +37,24 @@ class WorkflowAuditTests(unittest.TestCase):
         self.assertEqual(rows["jira"]["projects"], [])
         self.assertEqual(rows["jira"]["finding"], "")
 
+    def test_unreadable_projects_are_reported_not_fatal(self):
+        from tests.helpers import FakeResponse
+        server, session = make_server()
+        session.routes = [r for r in session.routes if "LEGACY" not in r[1].pattern]
+        session.add("GET", r"/project/LEGACY/workflowscheme$", FakeResponse(404, {"errorMessages": ["No project could be found with key 'LEGACY'."]}))
+        rows = {r["name"]: r for r in workflows.report(server)}
+        self.assertEqual(rows["(project LEGACY)"]["finding"], "project-unreadable")
+        self.assertEqual(rows["Old Release Flow"]["finding"], "maybe-unused")
+        self.assertEqual(rows["PLAT Workflow"]["finding"], "")
+
+    def test_other_errors_still_stop_the_audit(self):
+        from jiramigrate.api import ApiError
+        from tests.helpers import FakeResponse
+        server, session = make_server()
+        session.routes.insert(0, ("GET", __import__("re").compile(r"/project/OPS/workflowscheme$"), FakeResponse(500, "boom")))
+        with self.assertRaises(ApiError):
+            workflows.report(server)
+
     def test_one_scheme_lookup_per_project(self):
         server, session = make_server()
         workflows.report(server)

@@ -30,5 +30,16 @@ class SchemeAuditTests(unittest.TestCase):
         self.assertEqual(by_name[("notification", "OPS Notifications")], ["OPS"])
 
 
+    def test_unreadable_projects_make_findings_uncertain(self):
+        from tests.helpers import FakeResponse
+        server, session = make_server()
+        session.routes.insert(0, ("GET", __import__("re").compile(r"/project/OPS/permissionscheme$"), FakeResponse(403, {"errorMessages": ["no"]})))
+        rows = schemes.report(server)
+        by_name = {(r["kind"], r["name"]): r["finding"] for r in rows}
+        self.assertEqual(by_name[("project", "OPS")], "project-unreadable")
+        self.assertEqual(by_name[("permission", "2018 Contractor Access")], "maybe-unused")
+        self.assertEqual(by_name[("permission", "Open Intake")], "maybe-unused")
+
+
 if __name__ == "__main__":
     unittest.main()
