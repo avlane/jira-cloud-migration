@@ -13,6 +13,9 @@ Migration Assistant rather than a replacement for it:
 
 Status: just started. Audits first.
 
+More detail on the order of the steps is in [docs/runbook.md](docs/runbook.md); changes are listed in
+[CHANGELOG.md](CHANGELOG.md).
+
 ## Usage
 
     python -m jiramigrate audit fields            # duplicate custom fields
