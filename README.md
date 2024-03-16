@@ -11,7 +11,10 @@ Migration Assistant rather than a replacement for it:
 3. validation after the migration (issue counts, sampled field-level comparisons,
    attachment and comment counts, links).
 
-Status: just started. Audits first.
+Status: finished. Jira Server reached end of support on 2024-02-15 and the migrations this was
+written for are done, so the repository is no longer being developed. It still works against Server
+and Data Center 8.x and 9.x and Jira Cloud as of its last commit; issues and changes are unlikely to
+be picked up.
 
 More detail on the order of the steps is in [docs/runbook.md](docs/runbook.md); changes are listed in
 [CHANGELOG.md](CHANGELOG.md).
